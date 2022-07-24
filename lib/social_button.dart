@@ -138,42 +138,19 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 	@override
 	Widget buildIcon(BuildContext context) {
 		final size = getSize(context);
-		return SizedBox(
+		return Container(
 			width: size,
 			height: size,
+			decoration: BoxDecoration(
+				shape: BoxShape.circle
+			),
 			child: Stack(
 				children: [
 					Container(
 						width: size,
 						height: size,
-						decoration: BoxDecoration(
-							borderRadius: BorderRadius.circular(size / 2),
-							border: Border(
-								bottom: BorderSide(
-									color: Color(0xff2ba14b),
-									width: size / 5,
-								),
-								left: BorderSide(
-									color: Color(0xfff1b500),
-									width: size / 5,
-								),
-								right: BorderSide(
-									color: Color(0),
-									width: size / 5,
-								),
-								top: BorderSide(
-									color: Color(0xffe33e2b),
-									width: size / 5,
-								),
-							)
-						),
-					),
-					Container(
-						width: size,
-						height: size,
 						transform: Matrix4.rotationZ(pi / 4),
 						decoration: BoxDecoration(
-							borderRadius: BorderRadius.circular(size / 2),
 							border: Border(
 								bottom: BorderSide(
 									color: const Color(0),
@@ -189,6 +166,30 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 								),
 								top: BorderSide(
 									color: const Color(0),
+									width: size / 5,
+								),
+							)
+						),
+					),
+					Container(
+						width: size,
+						height: size,
+						decoration: BoxDecoration(
+							border: Border(
+								bottom: BorderSide(
+									color: Color(0xff2ba14b),
+									width: size / 5,
+								),
+								left: BorderSide(
+									color: Color(0xfff1b500),
+									width: size / 5,
+								),
+								right: BorderSide(
+									color: Color(0),
+									width: size / 5,
+								),
+								top: BorderSide(
+									color: Color(0xffe33e2b),
 									width: size / 5,
 								),
 							)
