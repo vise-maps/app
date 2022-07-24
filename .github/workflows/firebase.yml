@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'true'
-          token: ${{secrets.GITHUB_TOKEN}}
+          token: ${{secrets.PRIVATE_REPO_ACCESS}}
       - name: Install Flutter
         uses: britannio/action-install-flutter@v1.1
       - name: Install dependencies
