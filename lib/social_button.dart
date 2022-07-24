@@ -150,7 +150,9 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 						width: size,
 						height: size,
 						transform: Matrix4.rotationZ(pi / 4),
+						transformAlignment: Alignment.center,
 						decoration: BoxDecoration(
+							shape: BoxShape.circle,
 							border: Border(
 								bottom: BorderSide(
 									color: const Color(0),
@@ -175,6 +177,7 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 						width: size,
 						height: size,
 						decoration: BoxDecoration(
+							shape: BoxShape.circle,
 							border: Border(
 								bottom: BorderSide(
 									color: Color(0xff2ba14b),
