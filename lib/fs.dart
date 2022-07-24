@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:visemaps/window_manager/window_manager.dart';
 
 import 'package:visemaps/fs/html.dart' if (dart.library.io) 'package:visemaps/fs/io.dart' as fs;
@@ -137,8 +135,8 @@ class DirectoryItems {
 
 	DirectoryItems(this.files, this.directories);
 	DirectoryItems.fromListResult(ListResult result) :	
-		files = result.items.map((Reference e) => File._uber(e)), 
-		directories = result.prefixes.map((Reference e) => Directory._uber(e));
+		files = result.items.map(File._uber), 
+		directories = result.prefixes.map(Directory._uber);
 	
 	Iterable<FileSystemEntity> get all sync*  {
 		yield* directories;

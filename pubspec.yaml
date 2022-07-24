@@ -18,7 +18,6 @@ dependencies:
   firebase_core: ^1.19.2
   firebase_storage: ^10.3.2
   firebase_auth: ^3.4.2
-  google_sign_in: ^5.4.0
   window_manager: ^0.2.5
 
 dev_dependencies:

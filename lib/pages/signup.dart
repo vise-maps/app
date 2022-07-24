@@ -2,7 +2,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:visemaps/fs.dart';
 import 'package:visemaps/widgets/login_field.dart';
 import 'package:visemaps/widgets/controlled.dart';
@@ -135,63 +134,11 @@ class SignUpDesktop extends ControlledWidget {
 						const SizedBox(height: 32),
 						Row(
 							children: [
-								Expanded(
-									child: GoogleButton(
-										onTap: () async {
-											try {
-												final GoogleSignIn signIn = GoogleSignIn(
-													scopes: [
-														'email',
-														'profile',
-													],
-												);
-												final account = await signIn.signIn();
-												if (account == null) {
-													return;
-												}
-												final authentication = await account.authentication;
-												final u = await FirebaseAuth.instance.signInWithCredential(
-													GoogleAuthProvider.credential(
-														idToken: authentication.idToken,
-														accessToken: authentication.accessToken,
-													)
-												);
-												FileSystemEntity.user = u.user!.uid;
-												Navigator.pop(context);
-											}  catch (e) {
-												showCupertinoDialog(
-													context: context, 
-													builder: (BuildContext context) => CupertinoAlertDialog(
-														title: const Text('Error'),
-														content: Text(e.toString()),
-														actions: [
-															CupertinoDialogAction(
-																child: const Text('OK'),
-																onPressed: () => Navigator.pop(context),
-															)
-														],
-													)
-												);
-											}
-										},
-									),
-								),
+								Expanded(child: GoogleButton()),
 								const SizedBox(width: 20),
-								Expanded(
-									child: AppleButton(
-										onTap: () {
-
-										},
-									)
-								),
+								Expanded(child: AppleButton()),
 								const SizedBox(width: 20),
-								Expanded(
-									child: TwitterButton(
-										onTap: () {
-
-										},
-									)
-								),
+								Expanded(child: TwitterButton()),
 							],
 						)
 					]
@@ -253,55 +200,14 @@ class SignUp extends ControlledWidget {
 						const SizedBox(height: 40),
 						Row(
 							children: [
+								Expanded(child: GoogleButton(compact: true)),
+								const SizedBox(width: 20),
 								Expanded(
-									child: GoogleButton(
-										onTap: () async {
-                      try {
-                        final signIn = GoogleSignIn(
-                          scopes: [
-                            'email',
-                            'profile',
-                          ],
-                                          );
-                        final account = await signIn.signIn();
-                        if (account == null) {
-                          return;
-                        }
-                        final authentication = await account.authentication;
-                        final u = await FirebaseAuth.instance.signInWithCredential(
-                          GoogleAuthProvider.credential(
-                            idToken: authentication.idToken,
-                            accessToken: authentication.accessToken,
-                          )
-                        );
-                        FileSystemEntity.user = u.user!.uid;
-                        Navigator.pop(context);
-                      }  catch (e) {
-                        showCupertinoDialog(
-                          context: context, 
-                          builder: (BuildContext context) => CupertinoAlertDialog(
-                            title: const Text('Error'),
-                            content: Text(e.toString()),
-                            actions: [
-                              CupertinoDialogAction(
-                                child: const Text('OK'),
-                                onPressed: () => Navigator.pop(context),
-                              )
-                            ],
-                          )
-                        );
-                      }
-										}, 
-										compact: true
-									)
+									child: AppleButton(compact: true)
 								),
 								const SizedBox(width: 20),
 								Expanded(
-									child: AppleButton(onTap: () {}, compact: true)
-								),
-								const SizedBox(width: 20),
-								Expanded(
-									child: TwitterButton(onTap: () {}, compact: true)
+									child: TwitterButton(compact: true)
 								),
 							],
 						),

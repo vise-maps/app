@@ -2,7 +2,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:visemaps/fs.dart';
 import 'package:visemaps/widgets/controlled.dart';
 import 'package:visemaps/widgets/login_field.dart';
@@ -194,49 +193,11 @@ class Login extends ControlledWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const SizedBox(width: 30),
-                          GoogleButton(
-                            onTap: () async {
-                              try {
-                                final GoogleSignIn signIn = GoogleSignIn(
-                                  scopes: [
-                                    'email',
-                                    'profile',
-                                  ],
-                                );
-                                final account = await signIn.signIn();
-                                if (account == null) {
-                                  return;
-                                }
-                                final authentication = await account.authentication;
-                                final u = await FirebaseAuth.instance.signInWithCredential(
-                                  GoogleAuthProvider.credential(
-                                    idToken: authentication.idToken,
-                                    accessToken: authentication.accessToken,
-                                  )
-                                );
-                                FileSystemEntity.user = u.user!.uid;
-                                Navigator.pop(context);
-                              }  catch (e) {
-                                showCupertinoDialog(
-                                  context: context, 
-                                  builder: (BuildContext context) => CupertinoAlertDialog(
-                                    title: const Text('Error'),
-                                    content: Text(e.toString()),
-                                    actions: [
-                                      CupertinoDialogAction(
-                                        child: const Text('OK'),
-                                        onPressed: () => Navigator.pop(context),
-                                      )
-                                    ],
-                                  )
-                                );
-                              }
-                            }
-                          ),
+                          GoogleButton(),
                           const SizedBox(height: 20),
-                          AppleButton(onTap: () {}),
+                          AppleButton(),
                           const SizedBox(height: 20),
-                          TwitterButton(onTap: () {}),
+                          TwitterButton(),
                           const SizedBox(height: 30),
                         ]
                       )
@@ -272,15 +233,15 @@ class Login extends ControlledWidget {
             Row(
               children: [
                 Expanded(
-                  child: GoogleButton(onTap: () {}, compact: true)
+                  child: GoogleButton(compact: true)
                 ),
                 const SizedBox(width: 20),
                 Expanded(
-                  child: AppleButton(onTap: () {}, compact: true)
+                  child: AppleButton(compact: true)
                 ),
                 const SizedBox(width: 20),
                 Expanded(
-                  child: TwitterButton(onTap: () {}, compact: true)
+                  child: TwitterButton(compact: true)
                 ),
               ],
             ),

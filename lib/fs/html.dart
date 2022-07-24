@@ -3,9 +3,9 @@ import 'dart:html';
 
 Future<void> setup() async {
 	window.localStorage['vise://'] = 'true';
-	window.localStorage['vise://cloud'] = 'true';
-	window.localStorage['vise://trash'] = 'true';
-	window.localStorage['vise://local'] = 'true';
+	window.localStorage['vise://cloud/'] = 'true';
+	window.localStorage['vise://trash/'] = 'true';
+	window.localStorage['vise://local/'] = 'true';
 }
 
 abstract class FileSystemEntity {
