@@ -141,9 +141,6 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 		return Container(
 			width: size,
 			height: size,
-			decoration: BoxDecoration(
-				shape: BoxShape.circle
-			),
 			child: Stack(
 				children: [
 					Container(
@@ -152,14 +149,14 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 						transform: Matrix4.rotationZ(pi / 4),
 						transformAlignment: Alignment.center,
 						decoration: BoxDecoration(
-							shape: BoxShape.circle,
+							borderRadius: BorderRadius.circular(size),
 							border: Border(
 								bottom: BorderSide(
-									color: const Color(0),
+									style: BorderStyle.none,
 									width: size / 5,
 								),
 								left: BorderSide(
-									color: const Color(0),
+									style: BorderStyle.none,
 									width: size / 5,
 								),
 								right: BorderSide(
@@ -167,7 +164,7 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 									width: size / 5,
 								),
 								top: BorderSide(
-									color: const Color(0),
+									style: BorderStyle.none,
 									width: size / 5,
 								),
 							)
@@ -177,7 +174,7 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 						width: size,
 						height: size,
 						decoration: BoxDecoration(
-							shape: BoxShape.circle,
+							borderRadius: BorderRadius.circular(size),
 							border: Border(
 								bottom: BorderSide(
 									color: Color(0xff2ba14b),
@@ -201,10 +198,13 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 					Positioned(
 						top: size / 2.5,
 						right: 0,
-						child: Container(
-							height: size / 5,
-							width: size / 1.875,
-							color: const Color(0xff3a7cec)
+						child: ClipRRect(
+							borderRadius: BorderRadius.only(bottomRight: Radius.circular(size / 10)),
+							child: Container(
+								height: size / 5,
+								width: size / 1.875,
+								color: const Color(0xff3a7cec),
+							)
 						)
 					)
 				],
