@@ -254,9 +254,12 @@ class CloudFileExplorerState extends FileExplorerState {
 
 	@override
 	Future<VoidCallback> addFolder() async {
-		final root = FirebaseStorage.instance.ref(Modular.get<StreamNotifier<User?>>().value!.uid);
-		final folder = root.child(Modular.args.params['w']);
-		await folder.child('.ghost').putString('');
+		await FirebaseStorage
+			.instance
+			.ref(Modular.get<StreamNotifier<User?>>().value!.uid)
+			.child(Modular.args.params['w'])
+			.child('.ghost')
+			.putString('');
 		return () {};
 	}
 

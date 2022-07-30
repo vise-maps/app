@@ -62,7 +62,7 @@ class FileTile extends StatelessWidget {
 	}) : this._(
 		key, type,
 		reference.getData().then((data) => Item.fromMap(json.decode(utf8.decode([...data!])))),
-		'/${reference.fullPath}',
+		'/${reference.fullPath.replaceFirst(RegExp(r'\w+'), 'cloud')}',
 		active
 	);
 
