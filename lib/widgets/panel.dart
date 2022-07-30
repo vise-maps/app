@@ -124,7 +124,7 @@ class PanelState extends State<Panel> {
 								child: FileTile.fromFileSystemEntity(
 									type: FileTileType.compact,
 									entity: file,
-									active: path == '${file.absolute.uri}'
+									active: path == file.absolute.uri.pathSegments.join('/')
 								)
 							),
 							const SizedBox(height: 8),
@@ -300,7 +300,8 @@ class PanelState extends State<Panel> {
 						]
 					),
 				),
-			]
+			],
+			buildButtons(context)
 		];
 	}
 

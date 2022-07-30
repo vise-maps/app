@@ -23,7 +23,18 @@ enum FileTileType {
 }
 
 class FileTile extends StatelessWidget {
-	const FileTile._(Key? key, this.type, this.file, this.path, this.active) : super(key: key);
+	FileTile._(
+		Key? key, 
+		this.type, 
+		this.file, 
+		this.path, 
+		this.active, 
+		[void Function()? open]
+	) : onTap = active ? null : (() {
+			open?.call();
+			Modular.to.navigate(path);
+		}), 
+		super(key: key);
 
 	FileTile.fromFileSystemEntity({
 		Key? key,
@@ -38,7 +49,8 @@ class FileTile extends StatelessWidget {
 			)
 		) : Future.value(null),
 		entity.absolute.path,
-		active
+		active,
+		entity is File ? () => Modular.get<EditorController>().openFile(entity) : null
 	);
 
 	FileTile.fromItem({
@@ -63,7 +75,8 @@ class FileTile extends StatelessWidget {
 		key, type,
 		reference.getData().then((data) => Item.fromMap(json.decode(utf8.decode([...data!])))),
 		'/${reference.fullPath.replaceFirst(RegExp(r'\w+'), 'cloud')}',
-		active
+		active,
+		() => Modular.get<EditorController>().openReference(reference)
 	);
 
 
@@ -71,17 +84,13 @@ class FileTile extends StatelessWidget {
 	final String path;
 	final bool active;
 	final FileTileType type;
+	final void Function()? onTap;
 
  	@override
   	Widget build(BuildContext context) {
 		final Color primary = CupertinoTheme.of(context).primaryColor;
 		return GestureDetector(
-			onTap: () async {
-				if (await FileSystemEntity.isFile(path)) {
-					Modular.get<EditorController>().openFile(File(path));
-				}
-				Modular.to.navigate(path);
-			},
+			onTap: onTap,
 			child: Container(
 				width: double.infinity,
 				decoration: file is Directory ? null : BoxDecoration(
