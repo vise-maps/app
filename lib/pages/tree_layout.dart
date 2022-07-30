@@ -113,7 +113,7 @@ class RenderTreeLayoutBox extends RenderCustomMultiChildLayoutBox {
 			return;
 		}
 		if (fit)  {
-			final Size treeSize = delegate.boundingBox.add(delegate.tree!.getFullBounds().size);
+			final Size treeSize = delegate.boundingBox.add(delegate.tree!.getFullSize());
 			final Size newSize = constraints.constrainSizeAndAttemptToPreserveAspectRatio(treeSize);
 			final double scaleX = newSize.width / treeSize.width;
 			final double scaleY = newSize.height / treeSize.height;

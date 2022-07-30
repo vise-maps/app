@@ -209,15 +209,28 @@ class Tree {
 
 	void layout() {
 		firstWalk();
-		secondWalk(0.0);
+		secondWalk(0);
 	}
 
-	Rect getFullBounds() {
-		final Rect rect = Offset(x, y) & size;
-		for (final Tree child in children) {
-			rect.expandToInclude(child.getFullBounds());
-		}
-		return rect;
+	Size getFullSize() {
+		return Size(
+			children.first.prelim +
+			children.first.modifier +
+			children.last.modifier +
+			children.last.prelim +
+			children.last.size.width,
+			getFullHeight()
+		);
+	}
+
+	double getFullHeight() {
+		return size.height + children.fold(0, (height, child) {
+			final double childHeight = child.getFullHeight();
+			if (childHeight > height) {
+				return childHeight;
+			}
+			return height;
+		});
 	}
 }
 

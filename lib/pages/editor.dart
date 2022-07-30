@@ -113,7 +113,15 @@ class Editor extends StatelessWidget {
 					const SizedBox(height: 8),
 				],
 				Expanded(
-					child: editor.list ? ListLayout(listenable: editor) : TreeLayout.editable(editor: editor),
+					child: AnimatedBuilder(
+						animation: editor,
+						builder: (context, child) {
+							if (editor.list) {
+								return ListLayout(listenable: editor);
+							}
+							return TreeLayout.editable(editor: editor);
+						}
+					),
 				)
 			]
 		);
