@@ -194,11 +194,9 @@ abstract class FileExplorerState extends State<StatefulWidget> {
 }
 
 class LocalFileExplorerState extends FileExplorerState {
-	Directory get directory => Directory(Modular.args.uri.pathSegments.join('/'));
-
 	@override
 	Future<List<Widget>> buildTiles(BuildContext context, FileTileType type) async => [
-		await for (final FileSystemEntity file in directory.list()) (
+		await for (final FileSystemEntity file in Directory.fromUri(Modular.args.uri).list()) (
 			FileTile.fromFileSystemEntity(type: type, entity: file)
 		)
 	];
@@ -207,7 +205,7 @@ class LocalFileExplorerState extends FileExplorerState {
 	 Future<VoidCallback> addFile() async {
 		for (int? postfix; ; postfix = (postfix ?? 0) + 1) {
 			final name = 'new_file${postfix ?? ''}.json';
-			final file = File(Modular.args.uri.resolve(name).pathSegments.join('/'));
+			final file = File.fromUri(Modular.args.uri.resolve(name));
 			if (!await file.exists()) {
 				await file.writeAsString(getNewFile(name));
 				break;
@@ -219,12 +217,10 @@ class LocalFileExplorerState extends FileExplorerState {
 	@override
 	Future<VoidCallback> addFolder() async {
 		for (int? postfix; ; postfix = (postfix ?? 0) + 1) {
-			final folder = Directory(
+			final folder = Directory.fromUri(
 				Modular.args.uri.resolve(
 					'new_folder${postfix ?? ''}'
 				)
-				.pathSegments
-				.join('/')
 			);
 			if (!await folder.exists()) {
 				await folder.create();

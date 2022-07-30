@@ -192,8 +192,15 @@ class PanelState extends State<Panel> {
 			],
 			const SizedBox(height: 8),
 			GestureDetector(
-				onTap: () {
-					Directory('local/new_folder').create().then((value) => setState(() {}));
+				onTap: () async {
+					for (int? postfix; ; postfix = (postfix ?? 0) + 1) {
+						final dir = Directory('local/new_folder${postfix ?? ''}');
+						if (!await dir.exists()) {
+							await dir.create();
+							break;
+						}
+					}
+					setState(() {});
 				},
 				child: Row(
 					crossAxisAlignment: CrossAxisAlignment.center,
@@ -259,13 +266,18 @@ class PanelState extends State<Panel> {
 						const SizedBox(height: 8),
 					],
 				GestureDetector(
-					onTap: () {
-						FirebaseStorage
-							.instance
-							.ref(user.uid)
-							.child('new_folder/.ghost')
-							.putString('')
-							.then((value) => setState(() {}));
+					onTap: () async {
+						final root = FirebaseStorage.instance.ref(user.uid);
+						for (int? postfix; ; postfix = (postfix ?? 0) + 1) {
+							final dir = root.child('new_folder${postfix ?? ''}');
+							try {
+								await dir.list();
+							} catch (e) {
+								await dir.child('.ghost').putString('');
+								break;
+							}
+						}
+						setState(() {});
 					},
 					child: Row(
 						crossAxisAlignment: CrossAxisAlignment.center,
