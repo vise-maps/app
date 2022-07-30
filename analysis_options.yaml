@@ -1,0 +1,13 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    switch_case_completes_normally: false
+  strong-mode:
+    implicit-casts: true
+
+linter:
+  rules:
+    - always_declare_return_types
+    - prefer_single_quotes
+    - avoid_void_async

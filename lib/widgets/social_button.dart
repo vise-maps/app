@@ -1,10 +1,25 @@
-import 'dart:math';
-
-import 'package:firebase_auth/firebase_auth.dart';
+/// Vise Maps - an application for visualizing maps. 
+/// Copyright (C) 2022  Tomáš Wróbel
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+/// 
+/// social_button.dart - The design and basic functionality of a social sign-in button.
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart' show AuthProvider;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:visemaps/fs.dart';
-import 'package:visemaps/login_icons.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:visemaps/utils/login_icons.dart';
 
 abstract class SocialButton<P extends AuthProvider> extends StatelessWidget {
 	final double backgroundOpacity;
@@ -45,13 +60,12 @@ abstract class SocialButton<P extends AuthProvider> extends StatelessWidget {
 				try {
 					final P provider = this.provider();
 					if (provider is GoogleAuthProvider) {
-						provider.addScope("email");
-						provider.addScope("profile");	
+						provider.addScope('email');
+						provider.addScope('profile');	
 					}
 					final credentials = await FirebaseAuth.instance.signInWithPopup(provider);
 					if (credentials.user != null) {
-						FileSystemEntity.user = credentials.user!.uid;
-						Navigator.pop(context);
+						Modular.to.navigate('/');
 					}
 				} catch (e) {
 					showCupertinoDialog(
@@ -106,9 +120,9 @@ class AppleButton extends SocialButton<OAuthProvider> {
 	);
 
 	static OAuthProvider getProvider() {
-		return OAuthProvider("apple.com")
-			..addScope("email")
-			..addScope("name");
+		return OAuthProvider('apple.com')
+			..addScope('email')
+			..addScope('name');
 	}
 }
 
@@ -135,80 +149,76 @@ class GoogleButton extends SocialButton<GoogleAuthProvider> {
 		provider: GoogleAuthProvider.new
 	);
 
-	@override
+	/*@override
 	Widget buildIcon(BuildContext context) {
 		final size = getSize(context);
-		return Container(
-			width: size,
-			height: size,
-			child: Stack(
-				children: [
-					Container(
-						width: size,
-						height: size,
-						transform: Matrix4.rotationZ(pi / 4),
-						transformAlignment: Alignment.center,
-						decoration: BoxDecoration(
-							borderRadius: BorderRadius.circular(size),
-							border: Border(
-								bottom: BorderSide(
-									style: BorderStyle.none,
-									width: size / 5,
-								),
-								left: BorderSide(
-									style: BorderStyle.none,
-									width: size / 5,
-								),
-								right: BorderSide(
-									color: const Color(0xff3a7cec),
-									width: size / 5,
-								),
-								top: BorderSide(
-									style: BorderStyle.none,
-									width: size / 5,
-								),
-							)
-						),
-					),
-					Container(
-						width: size,
-						height: size,
-						decoration: BoxDecoration(
-							borderRadius: BorderRadius.circular(size),
-							border: Border(
-								bottom: BorderSide(
-									color: Color(0xff2ba14b),
-									width: size / 5,
-								),
-								left: BorderSide(
-									color: Color(0xfff1b500),
-									width: size / 5,
-								),
-								right: BorderSide(
-									color: Color(0),
-									width: size / 5,
-								),
-								top: BorderSide(
-									color: Color(0xffe33e2b),
-									width: size / 5,
-								),
-							)
-						),
-					),
-					Positioned(
-						top: size / 2.5,
-						right: 0,
-						child: ClipRRect(
-							borderRadius: BorderRadius.only(bottomRight: Radius.circular(size / 10)),
-							child: Container(
-								height: size / 5,
-								width: size / 1.875,
+		return Stack(
+			children: [
+				Container(
+					width: size,
+					height: size,
+					transform: Matrix4.rotationZ(pi / 4),
+					transformAlignment: Alignment.center,
+					decoration: BoxDecoration(
+						shape: BoxShape.circle,
+						border: Border(
+							bottom: BorderSide(
+								color: const Color(0x00000000),
+								width: size / 5,
+							),
+							left: BorderSide(
+								color: const Color(0x00000000),
+								width: size / 5,
+							),
+							right: BorderSide(
 								color: const Color(0xff3a7cec),
-							)
+								width: size / 5,
+							),
+							top: BorderSide(
+								color: const Color(0x00000000),
+								width: size / 5,
+							),
+						)
+					),
+				),
+				Container(
+					width: size,
+					height: size,
+					decoration: BoxDecoration(
+						shape: BoxShape.circle,
+						border: Border(
+							bottom: BorderSide(
+								color: const Color(0xff2ba14b),
+								width: size / 5,
+							),
+							left: BorderSide(
+								color: const Color(0xfff1b500),
+								width: size / 5,
+							),
+							right: BorderSide(
+								color: const Color(0x00000000),
+								width: size / 5,
+							),
+							top: BorderSide(
+								color: const Color(0xffe33e2b),
+								width: size / 5,
+							),
+						)
+					),
+				),
+				Positioned(
+					top: size / 2.5,
+					right: 0,
+					child: ClipRRect(
+						borderRadius: BorderRadius.only(bottomRight: Radius.circular(size / 10)),
+						child: Container(
+							height: size / 5,
+							width: size / 1.875,
+							color: const Color(0xff3a7cec),
 						)
 					)
-				],
-			)
+				)
+			]
 		);
-	}
+	}*/
 }

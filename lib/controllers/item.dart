@@ -1,6 +1,23 @@
+/// Vise Maps - an application for visualizing maps.
+/// Copyright (C) 2022  Tomáš Wróbel
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+///
+/// item.dart - the controller of an item in the editor.
 import 'package:flutter/cupertino.dart';
-import 'package:visemaps/editor.dart';
-import 'package:visemaps/link.dart';
+import 'package:visemaps/controllers/editor_controller.dart';
+import 'package:visemaps/utils/link.dart';
 
 class Item {
 	FocusNode node = FocusNode();
@@ -18,7 +35,7 @@ class Item {
 		required this.children,
 		required this.links,
 		this.color = const Color(0xFF4F6BA2)
-	}): controller = TextEditingController(text: title), 
+	}): controller = TextEditingController(text: title),
 		descriptionController = TextEditingController(text: description) {
 		for (Item child in children) {
 			child.parent = this;
@@ -101,23 +118,24 @@ class Item {
 		return null;
 	}
 
-	List<Widget> getList([Editor? editor]) {
+	List<Widget> getList([EditorController? editor]) {
 		final bool root = parent?.parent == null;
 		return [
-			ValueListenableBuilder<TextEditingValue>(
-				valueListenable: controller,
-				builder: (BuildContext context, TextEditingValue text, Widget? child) {
+			AnimatedBuilder(
+				animation: Listenable.merge([node, controller]),
+				builder: (BuildContext context, Widget? child) {
 					return Stack(
 						children: [
 							Container(
 								width: double.infinity,
 								height: root ? 20 : 18,
-								color: editor?.focused == this
-									? color.withOpacity(0.05)
-									: null,
+								decoration: editor?.focused != this ? null : BoxDecoration(
+									color: color.withOpacity(0.05),
+									borderRadius: BorderRadius.circular(2)
+								)
 							),
 							Text(
-								text.text == '' ? 'New ..' : '',
+								controller.text == '' ? 'New ..' : '',
 								style: TextStyle(
 									color: color.withOpacity(0.5),
 									fontSize: root ? 19 : 17,
@@ -147,7 +165,7 @@ class Item {
 					children: children.fold(
 						[],
 						(List<Widget> previousValue, Item element) => [
-							...previousValue, 
+							...previousValue,
 							...element.getList(editor)
 						]
 					)
@@ -156,14 +174,14 @@ class Item {
 		];
 	}
 
-	List<Widget> getGrid([Editor? editor]) {
+	List<Widget> getGrid([EditorController? editor]) {
 		final List<Widget> items = <Widget>[
 			LayoutId(
-				id: this, 
+				id: this,
 				child: Container(
 					decoration: BoxDecoration(
 						border: Border.all(
-							color: color.withOpacity(0.14), 
+							color: color.withOpacity(0.14),
 							width: 1
 						),
 						borderRadius: BorderRadius.circular(5),
@@ -173,14 +191,14 @@ class Item {
 					child: Column(
 						children: [
 							EditableText(
-								controller: controller, 
-								focusNode: node, 
+								controller: controller,
+								focusNode: node,
 								style: TextStyle(
 									color: color,
 									fontSize: 19,
 									fontWeight: FontWeight.bold
 								),
-								cursorColor: color, 
+								cursorColor: color,
 								backgroundCursorColor: color,
 								selectionColor: color.withOpacity(0.05),
 								readOnly: editor == null,
@@ -206,7 +224,7 @@ class Item {
 												},
 												child: const Icon(
 													CupertinoIcons.add,
-													color: Color(0xFF2200CC), 
+													color: Color(0xFF2200CC),
 													size: 16
 												)
 											)
@@ -216,15 +234,15 @@ class Item {
 							),
 							if (parent != null) (
 								EditableText(
-									controller: descriptionController, 
-									focusNode: descriptionNode, 
+									controller: descriptionController,
+									focusNode: descriptionNode,
 									style: TextStyle(
 										color: color,
 										fontSize: 16,
 										fontWeight: FontWeight.w300,
 										fontStyle: FontStyle.italic
 									),
-									cursorColor: color, 
+									cursorColor: color,
 									backgroundCursorColor: color,
 									selectionColor: color.withOpacity(0.05),
 									maxLines: null,

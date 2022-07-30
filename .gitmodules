@@ -13,3 +13,6 @@
 [submodule "android"]
 	path = android
 	url = https://github.com/vise-maps/android.git
+[submodule "fs"]
+	path = fs
+	url = https://github.com/vise-maps/fs.git

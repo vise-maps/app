@@ -1,26 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:visemaps/fs.dart';
-import 'package:visemaps/item.dart';
-import 'package:visemaps/link.dart';
+import 'package:fs/io.dart' if (dart.library.html) 'package:fs/html.dart';
+import 'package:visemaps/controllers/item.dart';
+import 'package:visemaps/utils/link.dart';
 
-class Editor extends ChangeNotifier {
+class EditorController with ChangeNotifier {
   Item? file;
   Item? focused;
   bool list = false;
   Timer? saveTimer;
   bool hasChanged = false;
 
-  Editor([String? path]) : super() {
+  EditorController() {
     addListener(() {
       hasChanged = true;
     });
-    if (path != null) {
-      open(path);
-    }
   }
 
   @override
@@ -102,9 +100,9 @@ class Editor extends ChangeNotifier {
     item.children.add(
       Item(
         description: '',
-        links: [], 
-        title: '', 
-        color: item.color, 
+        links: [],
+        title: '',
+        color: item.color,
         children: []
       )
       ..parent = item
@@ -124,14 +122,14 @@ class Editor extends ChangeNotifier {
   }
 
 
-  Future<void> open(String path) async {
+  Future<void> openFile(File entity) async {
     saveTimer?.cancel();
-    file = await FileSystem.getItem(File(path));
+    file = Item.fromMap(json.decode(await entity.readAsString()));
     if (file != null) {
       installListeners(file!);
       saveTimer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
         if (hasChanged) {
-          save(path);
+          entity.writeAsString(json.encode(file!));
           hasChanged = false;
         }
       });
@@ -139,15 +137,9 @@ class Editor extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<File> save(String currentPath) {
-    return File(currentPath).writeAsString(json.encode(file!.toJson()));
-  }
-
-  Future<void> saveAs(String currentPath, String path) async {
-    await save(currentPath);
-    final File newFile = await save(path);
-    file = await FileSystem.getItem(newFile);
-    installListeners(file!);
+  Future<void> openReference(Reference ref) async {
+    saveTimer?.cancel();
+    file = Item.fromMap(json.decode(utf8.decode([...(await ref.getData())!])));
     notifyListeners();
   }
 

@@ -1,6 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:visemaps/painters/welcome.dart';
-import 'package:flutter/widgets.dart';
-
 
 class Welcome extends StatelessWidget {
   	const Welcome({Key? key}) : super(key: key);
@@ -9,7 +9,7 @@ class Welcome extends StatelessWidget {
 	Widget build(BuildContext context) {
 		final MediaQueryData mediaQuery = MediaQuery.of(context);
 		const Text heading = Text(
-			'Welcome to Vise Maps', 
+			'Welcome to Vise Maps',
 			style: TextStyle(
 				color: Color(0xFF000000),
 				fontSize: 47,
@@ -22,7 +22,7 @@ class Welcome extends StatelessWidget {
 			padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
 			color: const Color(0xFFFFFFFF),
 			alignment: Alignment.center,
-			child: mediaQuery.size.width > 415 
+			child: mediaQuery.size.width > 415
 				? Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
@@ -33,16 +33,16 @@ class Welcome extends StatelessWidget {
 							children: [
 								GestureDetector(
 									onTap: () {
-										Navigator.pushNamed(context, '/login/');
+										Modular.to.navigate('/login/');
 									},
 									child: Container(
 										padding: const EdgeInsets.symmetric(
-											horizontal: 14, 
+											horizontal: 14,
 											vertical: 6
 										),
 										decoration: BoxDecoration(
 											borderRadius: BorderRadius.circular(4),
-											color: const Color(0xFFEF356A)
+											color: CupertinoTheme.of(context).primaryColor
 										),
 										child: const Text(
 											'Log-in',
@@ -58,27 +58,29 @@ class Welcome extends StatelessWidget {
 								const SizedBox(width: 16),
 								GestureDetector(
 									onTap: () {
-										Navigator.pushNamed(context, '/sign-up/');
+										Modular.to.navigate('/sign-up/');
 									},
-									child: Container(
-										padding: const EdgeInsets.symmetric(
-											horizontal: 14, 
-											vertical: 6
-										),
+									child: const DecoratedBox(
 										decoration: BoxDecoration(
-											borderRadius: BorderRadius.circular(4),
-											color: const Color.fromRGBO(0, 0, 0, 0.86)
+											borderRadius: BorderRadius.all(Radius.circular(4)),
+											color: Color.fromRGBO(0, 0, 0, 0.86)
 										),
-										child: const Text(
-											'Sign up',
-											style: TextStyle(
-												color: Color(0xFFFFFFFF),
-												fontSize: 16,
-												fontWeight: FontWeight.w700,
-												letterSpacing: -0.41,
+										child: Padding(
+											padding: EdgeInsets.symmetric(
+												horizontal: 14,
+												vertical: 6
 											),
-										),
-									)
+											child: Text(
+												'Sign up',
+												style: TextStyle(
+													color: Color(0xFFFFFFFF),
+													fontSize: 16,
+													fontWeight: FontWeight.w700,
+													letterSpacing: -0.41,
+												),
+											)
+										)
+									),
 								),
 							]
 						)
@@ -98,18 +100,18 @@ class Welcome extends StatelessWidget {
 						const Spacer(),
 						GestureDetector(
 							onTap: () {
-								Navigator.pushNamed(context, '/login/');
+								Modular.to.navigate('/login/');
 							},
 							child: Container(
 								padding: const EdgeInsets.symmetric(
-									horizontal: 6, 
+									horizontal: 6,
 									vertical: 14
 								),
 								width: double.infinity,
 								alignment: Alignment.center,
 								decoration: BoxDecoration(
 									borderRadius: BorderRadius.circular(4),
-									color: const Color(0xFFEF356A)
+									color: CupertinoTheme.of(context).primaryColor
 								),
 								child: const Text(
 									'Log-in',
@@ -125,11 +127,11 @@ class Welcome extends StatelessWidget {
 						const SizedBox(height: 12),
 						GestureDetector(
 							onTap: () {
-								Navigator.pushNamed(context, '/sign-up/');
+								Modular.to.navigate('/sign-up/');
 							},
 							child: Container(
 								padding: const EdgeInsets.symmetric(
-									horizontal: 6, 
+									horizontal: 6,
 									vertical: 14
 								),
 								width: double.infinity,

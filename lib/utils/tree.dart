@@ -1,3 +1,28 @@
+/// Vise Maps - an application for visualizing maps.
+/// Copyright (C) 2022  Tomáš Wróbel
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+///
+/// tree.dart - Dart implementation of non-layered tidy tree algorithm.
+/// In Vise Maps v0, there has been a file called tree.ts, which is
+/// TypeScript port from the npm package "non-layered-tidy-tree-layout"
+///
+/// Now, I've rewritten a TypeScript version of the algorithm to Dart.
+/// Copyright (c) 2019 Michael Wong and 2022 Tomáš Wróbel
+///
+/// The algorithm used in that project is from the paper by A.J. van der Ploeg:
+/// Drawing Non-layered Tidy Trees in Linear Time.
 import 'dart:ui';
 
 class Tree {
@@ -16,7 +41,7 @@ class Tree {
 	Tree? extremeLeft;
 	Tree? extremeRight;
 
-	// sum of modifiers 
+	// sum of modifiers
 	// at the extreme nodes
 	double msel = 0;
 	double mser = 0;
@@ -51,7 +76,7 @@ class Tree {
 			final int nr = index - shiftIndex;
 			children[shiftIndex + 1].shift += distance / nr;
 			children[index].shift -= distance / nr;
-			children[index].change -= distance - distance / nr; 
+			children[index].change -= distance - distance / nr;
 		}
 	}
 
@@ -62,7 +87,7 @@ class Tree {
 		int index,
 		Tree leftContour,
 		/// Sum of modifiers
-		double mscl 
+		double mscl
 	) {
 		final Tree li = children.first.extremeLeft!;
 		li.leftThread = leftContour;
@@ -79,7 +104,7 @@ class Tree {
 		int index,
 		Tree rightContour,
 		/// Sum of modifiers
-		double mser 
+		double mser
 	) {
 		final Tree ri = children[index].extremeRight!;
 		ri.rightThread = rightContour;
@@ -187,39 +212,11 @@ class Tree {
 		secondWalk(0.0);
 	}
 
-	Size getFullSize() {
-		return Size(
-			children.first.prelim +
-			children.first.modifier +
-			children.last.modifier +
-			children.last.prelim +
-			children.last.size.width,
-			getFullHeight()
-		);
-	}
-
-	double getFullHeight() {
-		double height = size.height;
-
-		height += children.isEmpty ? 0 : children.first.getFullHeight();
-
-		return height;
-	}
-
 	Rect getFullBounds() {
-		final Rect rect = Rect.fromLTWH(
-			x, y,
-			children.first.prelim +
-			children.first.modifier +
-			children.last.modifier +
-			children.last.prelim +
-			children.last.size.width + size.width, 
-			size.height
-		);
+		final Rect rect = Offset(x, y) & size;
 		for (final Tree child in children) {
 			rect.expandToInclude(child.getFullBounds());
 		}
-
 		return rect;
 	}
 }
@@ -227,13 +224,13 @@ class Tree {
 /// A linked list of the indexes of left
 /// siblings and their lowest vertical coordinate.
 class IYL {
-	double lowY;
-	int index;
-	IYL? next;
+	final double lowY;
+	final int index;
+	final IYL? next;
 
-	IYL(this.lowY, this.index, [this.next]);
+	const IYL(this.lowY, this.index, [this.next]);
 
-	static IYL update(double minY, int index, [IYL? ih]) {
+	factory IYL.update(double minY, int index, [IYL? ih]) {
 		// Remove siblings that are hidden by the new subtree.
 		while (ih != null && minY >= ih.lowY) {
 			// Prepend the new subtree

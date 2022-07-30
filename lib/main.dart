@@ -1,51 +1,139 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:visemaps/fs.dart';
+/// Vise Maps - an application for visualizing maps.
+/// Copyright (C) 2022  Tomáš Wróbel
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+///
+/// main.dart - a wrapper for the content.
+import 'dart:async';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fs/io.dart' if (dart.library.html) 'package:fs/html.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:visemaps/controllers/editor_controller.dart';
+import 'package:visemaps/firebase_options.dart';
+import 'package:visemaps/controllers/stream_notifier.dart';
 import 'package:visemaps/pages/editor.dart';
+
+import 'url/native.dart' if (dart.library.html) 'url/web.dart';
+import 'package:flutter/cupertino.dart' hide PageController;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:visemaps/pages/file_explorer.dart';
 import 'package:visemaps/pages/login.dart';
 import 'package:visemaps/pages/signup.dart';
 import 'package:visemaps/pages/welcome.dart';
-import 'package:visemaps/panel.dart';
-import 'package:visemaps/url.dart';
+import 'package:visemaps/widgets/panel.dart';
 
-class MainRoute extends PageRoute<String?> {
-	MainRoute({RouteSettings? settings}): super(settings: settings, fullscreenDialog: false);
+void main() async {
+  	usePathUrlStrategy();
+	try {
+		Directory.current = (await getApplicationDocumentsDirectory()) as dynamic;
+	} catch (e) {
+		// Web platform
+	}
 
-  @override
-  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-		final bool desktop = MediaQuery.of(context).size.width >= 640;
-		if (FirebaseAuth.instance.currentUser == null && settings.name == '/') {
-			return const Welcome();
-		} else if (settings.name == '/login/') {
-			return Login();
-		} else if (settings.name!.startsWith('/sign-up') && desktop) {
-			return SignUpDesktop();
-		} else if (settings.name == '/sign-up/') {
-			return SignUp();
-		} else if (settings.name == '/sign-up/password/') {
-			return SignUpPasswords();
-		} else if (desktop) {
-			final path = settings.name!.substring(1);
-			return Row(
-				children: [
-					Panel(path: path),
-					Expanded(
-						child: path.endsWith('/') || path == ''
-              ? FileExplorer(path: path) 
-              : Editor(path: path)
-					)
-				],
-			);
-		} else {
-			final path = settings.name!.substring(1);
-			return Column(
-				children: [
-					Expanded(
-            child: path.endsWith('/') || path == ''
-              ? FileExplorer(path: path) 
-              : Editor(path: path)
-          ),
+	await Directory('').create();
+	await Directory('local').create();
+	await Directory('trash').create();
+
+	await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+	runApp(ModularApp(module: MainModule(), child: const MainWidget()));
+}
+
+class MainModule extends Module {
+	@override
+	List<Bind> get binds => [
+		Bind.singleton((i) => StreamNotifier(FirebaseAuth.instance.userChanges())),
+		Bind.singleton((i) => EditorController()),
+	];
+	@override
+	List<ModularRoute> get routes => [
+		ChildRoute(
+			'/sign-up/',
+			child: (context, arguments) {
+				if (MediaQuery.of(context).size.width >= 600) {
+					return const SignUpDesktop();
+				} else {
+					return const SignUp();
+				}
+			},
+			guards: [NoAuthGuard()]
+		),
+		ChildRoute(
+			'/sign-up/password/',
+			child: (context, arguments) {
+				if (MediaQuery.of(context).size.width >= 600) {
+					return const SignUpDesktop();
+				} else {
+					return const SignUpPasswords();
+				}
+			},
+			guards: [NoAuthGuard()]
+		),
+		ChildRoute(
+			'/welcome/', 
+			child: (context, arguments) => const Welcome(), 
+			guards: [NoAuthGuard()]
+		),
+		ChildRoute(
+			'/login/',
+			child: (context, arguments) => const Login(),
+			guards: [NoAuthGuard()]
+		),
+		ChildRoute(
+			'/cloud/**',
+			guards: [AuthGuard()],
+			child: (context, arguments) {
+				if (arguments.params['w'].endsWith('.json')) {
+					return const Navigation(child: Editor());
+				}
+				return const Navigation(child: CloudFileExplorer());
+			}
+		),
+		WildcardRoute(
+			child: (context, arguments) {
+				switch (FileSystemEntity.typeSync(arguments.uri.pathSegments.join('/'))) {
+					case FileSystemEntityType.directory:
+						return const Navigation(child: LocalFileExplorer());
+					case FileSystemEntityType.file:
+						return const Navigation(child: Editor());
+					case FileSystemEntityType.link:
+					case FileSystemEntityType.notFound:
+					default:
+				    	return const Center(child: Text('File not found'));
+				}
+			}
+		),
+	];
+}
+
+class Navigation extends StatelessWidget {
+  	const Navigation({Key? key, required this.child}) : super(key: key);
+
+	final Widget child;
+
+	@override
+	Widget build(BuildContext context) {
+		final MediaQueryData query = MediaQuery.of(context);
+		return Flex(
+			verticalDirection: VerticalDirection.up,
+			direction: query.size.width >= 600 ? Axis.horizontal : Axis.vertical,
+			children: [
+				if (query.size.width >= 600) (
+					const Panel()
+				) else (
 					CupertinoTabBar(
 						items: const [
 							BottomNavigationBarItem(
@@ -57,117 +145,78 @@ class MainRoute extends PageRoute<String?> {
 								label: 'Trash',
 							),
 							BottomNavigationBarItem(
-								icon: Icon(CupertinoIcons.settings),
-								label: 'Settings', 
+								icon: Icon(CupertinoIcons.gear),
+								label: 'Settings',
 							),
 							BottomNavigationBarItem(
-								icon: Icon(CupertinoIcons.person_circle),
+								icon: Icon(CupertinoIcons.profile_circled),
 								label: 'Account',
 							)
 						],
-						currentIndex: getIndex(settings.name!),
-						backgroundColor: const Color(0xFFFFFFFF),
-						border: const Border.fromBorderSide(BorderSide.none),
+						currentIndex: getIndex(),
 						onTap: (index) {
 							if (index == 0) {
-								Navigator.of(context).pushNamed('/');
+								Modular.to.navigate('/');
 							} else if (index == 1) {
-								Navigator.of(context).pushNamed('/trash/');
+								Modular.to.navigate('/trash/');
 							} else if (index == 2) {
-								Navigator.of(context).pushNamed('/settings/');
+								Modular.to.navigate('/settings/');
 							} else if (index == 3) {
-								Navigator.of(context).pushNamed('/account/');
+								Modular.to.navigate('/account/');
 							}
 						},
-					),
-				],
-			);
+					)
+				),
+				Expanded(child: child)
+			],
+		);
+	}
+
+	static int getIndex() {
+		final segments = Modular.args.uri.pathSegments;
+		if (segments.isEmpty || segments[0] == 'local') {
+			return 0;
+		} else if (segments[0] == 'trash') {
+			return 1;
+		} else if (segments[0] == 'settings') {
+			return 2;
+		} else if (segments[0] == 'account') {
+			return 3;
+		} else {
+			throw Exception('Unknown path: ${Modular.args.uri.path}');
 		}
+	}
 }
+
+class AuthGuard extends RouteGuard {
+	AuthGuard() : super(redirectTo: '/welcome/');
+  	@override
+  	FutureOr<bool> canActivate(String path, ParallelRoute route) {
+    	return Modular.get<StreamNotifier<User?>>().value != null;
+  	}
+}
+
+class NoAuthGuard extends RouteGuard {
+	NoAuthGuard() : super(redirectTo: '/');
+  	@override
+  	FutureOr<bool> canActivate(String path, ParallelRoute route) {
+		return Modular.get<StreamNotifier<User?>>().value == null;
+  	}
+}
+
+class MainWidget extends StatelessWidget {
+	const MainWidget({Key? key}) : super(key: key);
 
 	@override
-	bool get maintainState => false;
-
-  String? get title {
-		switch (settings.name) {
-			case '/':
-				return FirebaseAuth.instance.currentUser == null ? 'Welcome' : 'Home';
-			case '/login/':
-				return 'Login';
-			case '/sign-up/':
-			case '/sign-up/passwords/':
-				return 'Signup';
-			case '/settings/':
-				return 'Settings';
-			case '/account/':
-				return 'Account';
-			case null:
-				return 'Vise Maps';
-			default:
-				return settings.name!.split('/').last;
-		}
+	Widget build(BuildContext context) {
+		return CupertinoApp.router(
+			routeInformationParser: Modular.routeInformationParser,
+			routerDelegate: Modular.routerDelegate,
+			theme: const CupertinoThemeData(
+				brightness: Brightness.light,
+				primaryColor: Color(0xFFEF5350),
+			),
+			debugShowCheckedModeBanner: false,
+		);
 	}
-
-	int getIndex(String path) {
-		switch (path) {
-			case '/trash/': return 1;
-			case '/settings/': return 2;
-			case '/account/': return 3;
-			default: return 0;
-		}
-	}
-  
-   @override
-   Color? get barrierColor => const Color(0xFFFFFFFF);
-  
-   @override
-   String? get barrierLabel => null;
-  
-   @override
-   Duration get transitionDuration => Duration.zero;
-
-   static MainRoute of(BuildContext context) => ModalRoute.of(context) as MainRoute;
 }
-
-void main() async {
-  usePathUrlStrategy();
-	await FileSystem.setup();
-  runApp(
-    WidgetsApp(
-      color: const Color(0xFFEF5350),
-      onGenerateRoute: (RouteSettings settings) {
-        return MainRoute(settings: settings);
-      },
-      builder: (BuildContext context, Widget? child) {
-        return CupertinoTheme(
-          data: const CupertinoThemeData(
-            brightness: Brightness.light,
-            primaryColor: Color(0xFFEF5350),
-            textTheme: CupertinoTextThemeData(
-              textStyle: TextStyle(
-                color: Color(0xFF000000),
-                fontSize: 16,
-                fontFamily: 'SF Pro Text',
-                fontFamilyFallback: [
-                  'SF Pro Text',
-                  'Helvetica',
-                  'Arial',
-                  'sans-serif',
-                ]
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-      localizationsDelegates: const [
-        DefaultCupertinoLocalizations.delegate, // Here !
-        DefaultWidgetsLocalizations.delegate
-      ],
-      supportedLocales: const [
-        Locale('en', 'US'),
-      ],
-    )
-  );
-}
-

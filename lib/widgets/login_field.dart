@@ -1,9 +1,9 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 
 class LoginField extends StatelessWidget {
 	LoginField({
-		Key? key, 
-		required this.controller, 
+		Key? key,
+		required this.controller,
 		required this.placeholder
 	}) : super(key: key);
 
@@ -13,7 +13,7 @@ class LoginField extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		const Color primary = Color(0xFFEF356A);
+		final Color primary = CupertinoTheme.of(context).primaryColor;
 		return AnimatedBuilder(
 			animation: node,
 			builder: (BuildContext context, Widget? child) {
@@ -21,8 +21,8 @@ class LoginField extends StatelessWidget {
 					decoration: BoxDecoration(
 						border: Border(
 							bottom: BorderSide(
-								color: node.hasPrimaryFocus 
-									? primary 
+								color: node.hasPrimaryFocus
+									? primary
 									: const Color.fromRGBO(0, 0, 0, 0.16),
 								width: node.hasFocus ? 2 : 1
 							)
@@ -52,13 +52,13 @@ class LoginField extends StatelessWidget {
 					);
 				},
 				child: EditableText(
-					controller: controller, 
-					focusNode: node, 
+					controller: controller,
+					focusNode: node,
 					style: const TextStyle(
 						color: Color.fromRGBO(0, 0, 0, 0.5),
 						fontSize: 17,
-					), 
-					cursorColor: primary, 
+					),
+					cursorColor: primary,
 					backgroundCursorColor: primary,
 					selectionColor: primary.withOpacity(0.2)
 				)

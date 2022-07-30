@@ -1,9 +1,26 @@
+/// Vise Maps - an application for visualizing maps.
+/// Copyright (C) 2022  Tomáš Wróbel
+///
+/// This program is free software: you can redistribute it and/or modify
+/// it under the terms of the GNU Affero General Public License as published
+/// by the Free Software Foundation, either version 3 of the License, or
+/// (at your option) any later version.
+///
+/// This program is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/// GNU Affero General Public License for more details.
+///
+/// You should have received a copy of the GNU Affero General Public License
+/// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+/// tree_layout.dart - Flutter implementation of non-layered tidy tree algorithm.
+/// Unlike tree.dart, this a custom file, even not from Vise Maps v0
 import 'package:vector_math/vector_math_64.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:visemaps/editor.dart';
-import 'package:visemaps/tree.dart';
-import 'package:visemaps/item.dart';
+import 'package:visemaps/controllers/editor_controller.dart';
+import 'package:visemaps/utils/tree.dart';
+import 'package:visemaps/controllers/item.dart';
 import 'dart:math' as math;
 
 class BoundingBox {
@@ -12,7 +29,7 @@ class BoundingBox {
 	BoundingBox(double gap, double bottomPadding) : offset = Offset(gap, bottomPadding);
 
 	Size add(Size size) {
-		return size + offset; 
+		return size + offset;
 	}
 
 	Size restore(Size size) {
@@ -45,7 +62,7 @@ class TreeLayoutDelegate extends MultiChildLayoutDelegate {
 	Tree convert(Item item, [double y = 16]) {
 		final Size size = boundingBox.add(
 			layoutChild(
-				item, 
+				item,
 				const BoxConstraints(
 					maxWidth: 333,
 					minWidth: 50,
@@ -55,8 +72,8 @@ class TreeLayoutDelegate extends MultiChildLayoutDelegate {
 		);
 
 		return Tree(
-			size, 
-			y, 
+			size,
+			y,
 			[
 				for (final Item child in item.children) (
 					convert(child, y + size.height)
@@ -96,15 +113,15 @@ class RenderTreeLayoutBox extends RenderCustomMultiChildLayoutBox {
 			return;
 		}
 		if (fit)  {
-			final Size treeSize = delegate.tree!.getFullSize();
+			final Size treeSize = delegate.boundingBox.add(delegate.tree!.getFullBounds().size);
 			final Size newSize = constraints.constrainSizeAndAttemptToPreserveAspectRatio(treeSize);
 			final double scaleX = newSize.width / treeSize.width;
 			final double scaleY = newSize.height / treeSize.height;
 			final double scale = math.min(scaleX, scaleY);
 			context.pushTransform(
-				needsCompositing, 
-				offset, 
-				Matrix4.diagonal3(Vector3(scale, scale, 1)), 
+				needsCompositing,
+				offset,
+				Matrix4.diagonal3(Vector3(scale, scale, 1)),
 				paintWithArrows,
 				oldLayer: layer is TransformLayer ? layer! as TransformLayer : null
 			);
@@ -133,11 +150,11 @@ class RenderTreeLayoutBox extends RenderCustomMultiChildLayoutBox {
 		final Size parentSize = boundingBox.restore(parent.size);
 		final Size childSize = boundingBox.restore(child.size);
 		final Offset begin = Offset(
-			parent.x + boundingBox.offset.dx / 2 + parentSize.width / 2, 
+			parent.x + boundingBox.offset.dx / 2 + parentSize.width / 2,
 			parent.y + parentSize.height
 		);
 		final Offset end = Offset(
-			child.x + boundingBox.offset.dx / 2 + childSize.width / 2 + 8, 
+			child.x + boundingBox.offset.dx / 2 + childSize.width / 2 + 8,
 			child.y
 		);
 		canvas.drawPath(
@@ -174,7 +191,7 @@ class TreeLayout extends CustomMultiChildLayout {
 	final bool fit;
 
 	TreeLayout.editable({
-		required Editor editor,
+		required EditorController editor,
 		Key? key
 	}): fit = false, super(
 		delegate: TreeLayoutDelegate(

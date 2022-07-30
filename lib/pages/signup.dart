@@ -2,18 +2,22 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:visemaps/fs.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:visemaps/widgets/login_field.dart';
-import 'package:visemaps/widgets/controlled.dart';
-import 'package:visemaps/password.dart';
+import 'package:visemaps/controllers/password.dart';
 import 'package:visemaps/painters/sign.dart';
 import 'package:visemaps/painters/signup.dart';
-import 'package:visemaps/social_button.dart';
+import 'package:visemaps/widgets/social_button.dart';
 
 
-class SignUpDesktop extends ControlledWidget {
-	SignUpDesktop({Key? key}) : super(key: key);
-	
+class SignUpDesktop extends StatefulWidget {
+	const SignUpDesktop({Key? key}) : super(key: key);
+
+	@override
+	SignUpDesktopState createState() => SignUpDesktopState();
+}
+
+class SignUpDesktopState extends State<SignUpDesktop> {
 	final TextEditingController email = TextEditingController();
 	final PasswordController password = PasswordController();
 	final PasswordController confirm = PasswordController();
@@ -21,6 +25,7 @@ class SignUpDesktop extends ControlledWidget {
 
 	@override
 	void dispose() {
+		super.dispose();
 		email.dispose();
 		password.dispose();
 		confirm.dispose();
@@ -29,6 +34,7 @@ class SignUpDesktop extends ControlledWidget {
 
 	@override
 	Widget build(BuildContext context) {
+		final Color primary = CupertinoTheme.of(context).primaryColor;
 		return Container(
 			alignment: Alignment.center,
 			color: const Color(0xFFFFFFFF),
@@ -39,7 +45,7 @@ class SignUpDesktop extends ControlledWidget {
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: [
 						const Text(
-							'Sign Up', 
+							'Sign Up',
 							style: TextStyle(
 								color: Color(0xFF000000),
 								fontSize: 47,
@@ -54,14 +60,14 @@ class SignUpDesktop extends ControlledWidget {
 								children: [
 									Expanded(
 										child: LoginField(
-											controller: name, 
+											controller: name,
 											placeholder: 'Full Name'
 										),
 									),
 									const SizedBox(width: 20),
 									Expanded(
 										child: LoginField(
-											controller: password, 
+											controller: password,
 											placeholder: 'Password'
 										),
 									),
@@ -75,14 +81,14 @@ class SignUpDesktop extends ControlledWidget {
 								children: [
 									Expanded(
 										child: LoginField(
-											controller: email, 
+											controller: email,
 											placeholder: 'Email'
 										),
 									),
 									const SizedBox(width: 20),
 									Expanded(
 										child: LoginField(
-											controller: confirm, 
+											controller: confirm,
 											placeholder: 'Confirm Password'
 										),
 									),
@@ -92,13 +98,12 @@ class SignUpDesktop extends ControlledWidget {
 						const SizedBox(height: 20),
 						GestureDetector(
 							onTap: () async {
-                final u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: email.text,
-                  password: password.text,
-                );
-
-                await u.user!.updateDisplayName(name.text);
-                Navigator.of(context).pushReplacementNamed('/');
+								final credentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+									email: email.text,
+									password: password.text,
+								);
+								await credentials.user!.updateDisplayName(name.text);
+								Navigator.of(context).pushReplacementNamed('/');
 							},
 							child: Container(
 								padding: const EdgeInsets.symmetric(
@@ -109,7 +114,7 @@ class SignUpDesktop extends ControlledWidget {
 								alignment: Alignment.center,
 								decoration: BoxDecoration(
 									borderRadius: BorderRadius.circular(4),
-									color: const Color(0xFFEF356A),
+									color: primary,
 								),
 								child: const Text(
 									'Sign Up',
@@ -133,11 +138,11 @@ class SignUpDesktop extends ControlledWidget {
 						),
 						const SizedBox(height: 32),
 						Row(
-							children: [
+							children: const [
 								Expanded(child: GoogleButton()),
-								const SizedBox(width: 20),
+								SizedBox(width: 20),
 								Expanded(child: AppleButton()),
-								const SizedBox(width: 20),
+								SizedBox(width: 20),
 								Expanded(child: TwitterButton()),
 							],
 						)
@@ -148,14 +153,21 @@ class SignUpDesktop extends ControlledWidget {
 	}
 }
 
-class SignUp extends ControlledWidget {
+class SignUp extends StatefulWidget {
+	const SignUp({Key? key}) : super(key: key);
+
+	@override
+	SignUpState createState() => SignUpState();
+}
+
+class SignUpState extends State<SignUp> {
 	final TextEditingController email = TextEditingController();
 	final TextEditingController name = TextEditingController();
 
-  SignUp({Key? key}) : super(key: key);
 
 	@override
 	void dispose() {
+		super.dispose();
 		email.dispose();
 		name.dispose();
 	}
@@ -171,7 +183,7 @@ class SignUp extends ControlledWidget {
 				child: Column(
 					children: [
 						const Text(
-							'Sign Up', 
+							'Sign Up',
 							style: TextStyle(
 								color: Color(0xFF000000),
 								fontSize: 47,
@@ -189,23 +201,21 @@ class SignUp extends ControlledWidget {
 						),
 						const SizedBox(height: 40),
 						LoginField(
-							controller: name, 
+							controller: name,
 							placeholder: 'Full Name'
 						),
 						const SizedBox(height: 6),
 						LoginField(
-							controller: email, 
+							controller: email,
 							placeholder: 'Email'
-						),				
+						),
 						const SizedBox(height: 40),
 						Row(
-							children: [
+							children: const [
 								Expanded(child: GoogleButton(compact: true)),
-								const SizedBox(width: 20),
-								Expanded(
-									child: AppleButton(compact: true)
-								),
-								const SizedBox(width: 20),
+								SizedBox(width: 20),
+								Expanded(child: AppleButton(compact: true)),
+								SizedBox(width: 20),
 								Expanded(
 									child: TwitterButton(compact: true)
 								),
@@ -214,22 +224,20 @@ class SignUp extends ControlledWidget {
 						const SizedBox(height: 40),
 						GestureDetector(
 							onTap: () async {
-								final String? password = await Navigator.pushNamed<String>(
-									context, 
+								final String? password = await Modular.to.pushNamed<String>(
 									'/sign-up/password/'
 								);
 
 								if (password != null) {
 									try {
-										final u = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+										await FirebaseAuth.instance.createUserWithEmailAndPassword(
 											email: email.text,
 											password: password
 										);
-										FileSystemEntity.user = u.user!.uid;
-										Navigator.pop(context);
+										Modular.to.navigate('/');
 									} catch (e) {
 										showCupertinoDialog(
-											context: context, 
+											context: context,
 											builder: (BuildContext context) => CupertinoAlertDialog(
 												title: const Text('Error'),
 												content: Text(e.toString()),
@@ -250,9 +258,9 @@ class SignUp extends ControlledWidget {
 								),
 								width: double.infinity,
 								alignment: Alignment.center,
-								decoration: BoxDecoration(
-									borderRadius: BorderRadius.circular(8),
-									color: const Color(0xFFF2F2F7)
+								decoration: const BoxDecoration(
+									borderRadius: BorderRadius.all(Radius.circular(8)),
+									color: Color(0xFFF2F2F7)
 								),
 								child: const Text(
 									'Continue',
@@ -272,20 +280,28 @@ class SignUp extends ControlledWidget {
 	}
 }
 
-class SignUpPasswords extends ControlledWidget {
+class SignUpPasswords extends StatefulWidget {
+  	const SignUpPasswords({Key? key}) : super(key: key);
+
+	@override
+	SignUpPasswordsState createState() => SignUpPasswordsState();
+}
+
+class SignUpPasswordsState extends State<SignUpPasswords> {
 	final TextEditingController password = TextEditingController();
 	final TextEditingController confirmPassword = TextEditingController();
 
-  	SignUpPasswords({Key? key}) : super(key: key);
 
 	@override
 	void dispose() {
+		super.dispose();
 		password.dispose();
 		confirmPassword.dispose();
 	}
 
 	@override
 	Widget build(BuildContext context) {
+		final Color primary = CupertinoTheme.of(context).primaryColor;
 		return Container(
 			padding: const EdgeInsets.symmetric(
 				vertical: 51,
@@ -294,7 +310,7 @@ class SignUpPasswords extends ControlledWidget {
 			child: Column(
 				children: [
 					const Text(
-						'Sign Up', 
+						'Sign Up',
 						style: TextStyle(
 							color: Color(0xFF000000),
 							fontSize: 47,
@@ -312,14 +328,14 @@ class SignUpPasswords extends ControlledWidget {
 					),
 					const SizedBox(height: 40),
 					LoginField(
-						controller: password, 
+						controller: password,
 						placeholder: 'Password'
 					),
 					const SizedBox(height: 6),
 					LoginField(
-						controller: confirmPassword, 
+						controller: confirmPassword,
 						placeholder: 'Confirm Password'
-					),				
+					),
 					const SizedBox(height: 40),
 					GestureDetector(
 						onTap: () {
@@ -327,7 +343,7 @@ class SignUpPasswords extends ControlledWidget {
 								Navigator.pop(context, password.text);
 							} else {
 								showCupertinoDialog<void>(
-									context: context, 
+									context: context,
 									builder: (BuildContext context) => CupertinoAlertDialog(
 										title: const Text('Error'),
 										content: const Text('Passwords do not match'),
@@ -352,7 +368,7 @@ class SignUpPasswords extends ControlledWidget {
 							alignment: Alignment.center,
 							decoration: BoxDecoration(
 								borderRadius: BorderRadius.circular(4),
-								color: const Color(0xFFEF356A),
+								color: primary,
 							),
 							child: const Text(
 								'Sign Up',

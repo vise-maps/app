@@ -2,22 +2,27 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:visemaps/fs.dart';
-import 'package:visemaps/widgets/controlled.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:visemaps/widgets/login_field.dart';
-import 'package:visemaps/password.dart';
+import 'package:visemaps/controllers/password.dart';
 import 'package:visemaps/painters/sign.dart';
-import 'package:visemaps/social_button.dart';
+import 'package:visemaps/widgets/social_button.dart';
 
-class Login extends ControlledWidget {
+class Login extends StatefulWidget {
+	const Login({Key? key}) : super(key: key);
+
+  @override
+  LoginState createState() => LoginState();
+}
+
+class LoginState extends State<Login> {
 	final TextEditingController email = TextEditingController();
 	final PasswordController password = PasswordController();
 	final ValueNotifier<bool> remember = ValueNotifier(true);
 
-	Login({Key? key}) : super(key: key);
-
   @override
   void dispose() {
+    super.dispose();
     email.dispose();
     password.dispose();
     remember.dispose();
@@ -26,8 +31,9 @@ class Login extends ControlledWidget {
 	@override
 	Widget build(BuildContext context) {
 		final MediaQueryData mediaQuery = MediaQuery.of(context);
+    final Color primary = CupertinoTheme.of(context).primaryColor;
 		const Text heading = Text(
-			'Log In', 
+			'Log In',
 			style: TextStyle(
 				color: Color(0xFF000000),
 				fontSize: 47,
@@ -42,8 +48,8 @@ class Login extends ControlledWidget {
           vertical: 51,
           horizontal: 16
         ),
-        child: mediaQuery.size.width > 550 ? SizedBox(
-          width: 538, 
+        child: mediaQuery.size.width >= 600 ? SizedBox(
+          width: 538,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,27 +66,26 @@ class Login extends ControlledWidget {
                       children: [
                         const SizedBox(height: 12.5),
                         LoginField(
-                          controller: email, 
+                          controller: email,
                           placeholder: 'Email'
                         ),
                         const SizedBox(height: 20),
                         LoginField(
-                          controller: password, 
+                          controller: password,
                           placeholder: 'Password'
                         ),
                         const SizedBox(height: 20),
                         GestureDetector(
                           onTap: () async {
                             try {
-                              final u = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                                email: email.text, 
+                              await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                email: email.text,
                                 password: password.text
                               );
-                              FileSystemEntity.user = u.user!.uid;
-                              Navigator.pop(context);
+                              Modular.to.navigate('/');
                             } catch (e) {
                               showCupertinoDialog(
-                                context: context, 
+                                context: context,
                                 builder: (BuildContext context) => CupertinoAlertDialog(
                                   title: const Text('Error'),
                                   content: Text(e.toString()),
@@ -102,7 +107,7 @@ class Login extends ControlledWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4),
-                              color: const Color(0xFFEF356A)
+                              color: primary
                             ),
                             child: const Text(
                               'Log-in',
@@ -121,10 +126,10 @@ class Login extends ControlledWidget {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                
+
                               },
                               child: const Text(
-                                'Forgot password?', 
+                                'Forgot password?',
                                 style: TextStyle(
                                   color: Color(0x80000000),
                                   fontSize: 12,
@@ -143,7 +148,7 @@ class Login extends ControlledWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   const Text(
-                                    'Remember me', 
+                                    'Remember me',
                                     style: TextStyle(
                                       color: Color(0x80000000),
                                       fontSize: 12,
@@ -153,14 +158,14 @@ class Login extends ControlledWidget {
                                   ),
                                   const SizedBox(width: 4),
                                   ValueListenableBuilder<bool>(
-                                    valueListenable: remember, 
+                                    valueListenable: remember,
                                     builder: (BuildContext context, bool remember, Widget? child) => Container(
                                       width: 14,
                                       height: 14,
                                       alignment: Alignment.center,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(2),
-                                        color: Color(remember ? 0xFFEF356A : 0xFFF4F4F4),
+                                        color: remember ? primary : const Color(0xFFF4F4F4),
                                         border: remember ? null : Border.all(
                                           color: const Color(0xFF000000),
                                           width: 1
@@ -191,14 +196,14 @@ class Login extends ControlledWidget {
                     Expanded(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const SizedBox(width: 30),
+                        children: const [
+                          SizedBox(width: 30),
                           GoogleButton(),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20),
                           AppleButton(),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20),
                           TwitterButton(),
-                          const SizedBox(height: 30),
+                          SizedBox(height: 30),
                         ]
                       )
                     )
@@ -221,25 +226,25 @@ class Login extends ControlledWidget {
             ),
             const SizedBox(height: 40),
             LoginField(
-              controller: email, 
+              controller: email,
               placeholder: 'Email'
             ),
             const SizedBox(height: 6),
             LoginField(
-              controller: password, 
+              controller: password,
               placeholder: 'Password'
             ),
             const SizedBox(height: 40),
             Row(
-              children: [
+              children: const [
                 Expanded(
                   child: GoogleButton(compact: true)
                 ),
-                const SizedBox(width: 20),
+                SizedBox(width: 20),
                 Expanded(
                   child: AppleButton(compact: true)
                 ),
-                const SizedBox(width: 20),
+                SizedBox(width: 20),
                 Expanded(
                   child: TwitterButton(compact: true)
                 ),
@@ -249,15 +254,14 @@ class Login extends ControlledWidget {
             GestureDetector(
               onTap: () async {
                 try {
-                  final u = await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: email.text, 
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email.text,
                     password: password.text
                   );
-                  FileSystemEntity.user = u.user!.uid;
-                  Navigator.pop(context);
+                  Modular.to.navigate('/');
                 } catch (e) {
                   showCupertinoDialog(
-                    context: context, 
+                    context: context,
                     builder: (BuildContext context) => CupertinoAlertDialog(
                       title: const Text('Error'),
                       content: Text(e.toString()),
@@ -279,7 +283,7 @@ class Login extends ControlledWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: const Color(0xFFEF356A)
+                  color: primary
                 ),
                 child: const Text(
                   'Log-in',

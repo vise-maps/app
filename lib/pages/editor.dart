@@ -1,147 +1,121 @@
 import 'package:flutter/cupertino.dart';
-import 'package:visemaps/editor.dart' as notify;
-import 'package:visemaps/layout.dart';
-import 'package:visemaps/link.dart';
-import 'package:visemaps/widgets/controlled.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:visemaps/controllers/editor_controller.dart';
+import 'package:visemaps/pages/tree_layout.dart';
+import 'package:visemaps/pages/list_layout.dart';
+import 'package:visemaps/utils/uri_name.dart';
 
-class Editor extends ControlledWidget {
-	final notify.Editor editor;
-	final String path;
-
-	Editor({
-		Key? key, 
-		required this.path
-	}): editor = notify.Editor(path), 
-		super(key: key);
-
-	@override
-	void dispose() {
-		editor.dispose();
-	}
+class Editor extends StatelessWidget {
+	const Editor({Key? key}): super(key: key);
 
 	@override
 	Widget build(BuildContext context) {
-		return AnimatedBuilder(
-			animation: editor,
-			builder: (context, child) {
-				if (editor.file == null) {
-					return const Center(
-						child: CupertinoActivityIndicator(),
-					);
-				}
-				if (editor.list) {
-					return Padding(
-						padding: const EdgeInsets.all(16),
-						child: Column(
-							mainAxisSize: MainAxisSize.max,
+		final editor = Modular.get<EditorController>();
+
+		return Column(
+			children: [
+				if (MediaQuery.of(context).size.width >= 600) ...[
+					Container(
+						width: double.infinity,
+						height: 36,
+						color: const Color.fromRGBO(249, 249, 249, 0.95),
+					),
+					Container(
+						width: double.infinity,
+						padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+						child: Stack(
+							alignment: Alignment.center,
 							children: [
-								Container(
-									width: double.infinity,
-									alignment: Alignment.center,
-									child: EditableText(
-										controller: editor.file!.controller,
-										focusNode: editor.file!.node,
-										style: TextStyle(
-											color: editor.file!.color,
-											fontSize: 24,
-											fontWeight: FontWeight.bold,
-										),
-										cursorColor: editor.file!.color,
-										backgroundCursorColor: editor.file!.color,
-										selectionColor: editor.file!.color.withOpacity(0.5),
-										maxLines: null,
+								Text(
+									Modular.args.uri.name,
+									style: const TextStyle(
+										fontSize: 18,
+										fontWeight: FontWeight.w600,
+										color: Color(0xFF000000)
 									)
 								),
-								Expanded(
-									child: ListView.separated(
-										itemBuilder: (context, index) {
-											final item = editor.file!.children[index];
-											final focused =
-												item.hasChild(editor.focused)
-												? editor.focused!
-												: item;
-											return Container(
-												decoration: BoxDecoration(
-													border: Border.all(
-														color: item.color.withOpacity(0.14),
-														width: 1
-													),
-													borderRadius: BorderRadius.circular(5),
-													color: item.color.withOpacity(0.05)
-												),
-												padding: const EdgeInsets.all(8),
-												child: Column(
-													children: [
-														...item.getList(),
-														const SizedBox(height: 10),
-														Container(
-															height: 1,
-															width: double.infinity,
-															color: item.color.withOpacity(0.14)
-														),
-														Align(
-															alignment: Alignment.centerRight,
-															child: GestureDetector(
-																onTap: () {
-																	editor.add(focused);
-																},
-																child: const Icon(CupertinoIcons.add_circled),
-															)
-														),
-														SizedBox(
-															width: double.infinity,
-															child: Wrap(
-																spacing: 6,
-																runSpacing: 6,
-																crossAxisAlignment: WrapCrossAlignment.center,
-																children: [
-																	for (final link in focused.links) (
-																		LinkInput(link: link)
-																	),
-																	GestureDetector(
-																		onTap: () {
-																			editor.addLink(focused);
-																		},
-																		child: const Icon(
-																			CupertinoIcons.add,
-																			color: Color(0xFF2200CC),
-																			size: 16
-																		)
-																	)
-																]
-															)
-														),
-														const SizedBox(height: 8),
-														EditableText(
-															controller: focused.descriptionController,
-															focusNode: focused.descriptionNode,
-															style: TextStyle(
-																color: item.color,
-																fontSize: 16,
-																fontWeight: FontWeight.w300,
-																fontStyle: FontStyle.italic
-															),
-															cursorColor: item.color,
-															backgroundCursorColor: item.color,
-															selectionColor: item.color.withOpacity(0.05),
-															maxLines: null,
-														),
-													],
-												)
-											);
-										},
-										separatorBuilder: (context, index) {
-											return const SizedBox(height: 8);
-										},
-										itemCount: editor.file!.children.length,
+								Positioned(
+									right: 0,
+									child: GestureDetector(
+										onTap: editor.toggleList,
+										child: AnimatedBuilder(
+											animation: editor,
+											builder: (context, child) {
+												return Icon(
+													editor.list 
+														? CupertinoIcons.square_split_2x2
+														: CupertinoIcons.list_bullet,
+													size: 20,
+												);
+											}
+										)
 									)
 								)
 							]
+						),
+					),
+				] else  ...[
+					Padding(
+						padding: const EdgeInsets.fromLTRB(11, 16, 19, 16),
+						child: Row(
+							crossAxisAlignment: CrossAxisAlignment.center,
+							children: [
+								if (Modular.to.canPop()) ...[
+									GestureDetector(
+										onTap: () {
+											Modular.to.pop();
+										},
+										child: const Icon(
+											CupertinoIcons.back,
+											size: 24,
+											color: Color(0xFF000000)
+										)
+									),
+									const SizedBox(width: 11),
+								],
+								Text(
+									Modular.args.uri.name,
+									style: const TextStyle(
+										fontSize: 17,
+										fontWeight: FontWeight.w600,
+										letterSpacing: -0.41,
+										color: Color(0xFF000000)
+									)
+								),
+								const Spacer(),
+								 GestureDetector(
+									onTap: editor.toggleList,
+									child: AnimatedBuilder(
+										animation: editor,
+										builder: (context, child) {
+											return Icon(
+												editor.list 
+													? CupertinoIcons.square_split_2x2
+													: CupertinoIcons.list_bullet,
+												size: 24,
+											);
+										}
+									)
+								),
+								const SizedBox(width: 20),
+								GestureDetector(
+									onTap: () {
+									},
+									child: const Icon(
+										CupertinoIcons.ellipsis_circle,
+										size: 24,
+										color: Color(0xFF000000)
+									)
+								),
+							]
 						)
-					);
-				}
-				return TreeLayout.editable(editor: editor);
-			}
+					),
+					const SizedBox(height: 8),
+				],
+				Expanded(
+					child: editor.list ? ListLayout(listenable: editor) : TreeLayout.editable(editor: editor),
+				)
+			]
 		);
 	}
 }

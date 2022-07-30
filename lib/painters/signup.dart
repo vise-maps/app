@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 
 //Copy this CustomPainter code to the Bottom of the File
 class SignUpPainter extends CustomPainter {
-  SignUpPainter({Listenable? repaint}) : super(repaint: repaint);    
+  SignUpPainter({Listenable? repaint}) : super(repaint: repaint);
 
   @override
   void paint(Canvas canvas, Size size) {

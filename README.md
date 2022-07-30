@@ -8,9 +8,12 @@ This project is a Flutter application.
 
 Steps to develop:
 
-1. [Flutter](https://flutter.dev) Project
-	+ create default project
-	+ copy all files from this repository (replace if neccessary)
+1. [Flutter](https://flutter.dev)
+	+ `git clone https://github.com/flutter/flutter.git -B stable`
+	+ Add the cloned folder to the path
+	+ `flutter create yourapp`
+	+ Copy all files from this repository (replace if neccessary)
+	+ Get packages &ndash; `flutter pub get`
 2. [Firebase](https://firebase.google.com)
 	+ Authentication
 	+ Storage
