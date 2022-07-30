@@ -160,9 +160,7 @@ class PanelState extends State<Panel> {
 				if (folder is Directory && folder.uri.pathSegments.first.contains(search.text)) ...[
 					GestureDetector(
 						onTap: () {
-							Modular.to.navigate(
-								'/${folder.uri}'
-							);
+							Modular.to.navigate(folder.absolute.uri.toString());
 						},
 						child: Container(
 							padding: const EdgeInsets.symmetric(
