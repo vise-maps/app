@@ -65,9 +65,9 @@ class FieldState extends State<Field> {
 					return Container(
 						width: double.infinity,
 						margin: EdgeInsets.symmetric(vertical: 3 - borderWidth),
-						padding: const EdgeInsets.symmetric(
+						padding: EdgeInsets.symmetric(
 							vertical: 8,
-							horizontal: 14
+							horizontal: 17 - borderWidth
 						),
 						decoration: BoxDecoration(
 							color: Color(hover ? 0xFFF2F2F7 : 0xFFE5E5E5),

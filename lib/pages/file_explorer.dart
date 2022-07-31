@@ -111,6 +111,9 @@ abstract class FileExplorerState extends State<StatefulWidget> {
 									future: buildTiles(context, isMobile ? FileTileType.mobile : FileTileType.desktop),
 									builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
 										if (snapshot.hasData) {
+											if (snapshot.data!.isEmpty) {
+
+											}
 											return GridView(
 												padding: const EdgeInsets.all(56),
 												gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -151,13 +154,13 @@ abstract class FileExplorerState extends State<StatefulWidget> {
 
 	static int getColumnCount(double width) {
 		if (width <= kMobileBreakpoint) {
-	   	 	return 2;
+	   	 	return 1;
   		} else if (width > kMobileBreakpoint && width <= kTabletBreakpoint) {
-    		return 4;
+    		return 2;
   		} else if (width > kTabletBreakpoint && width <= kDesktopBreakPoint) {
-    		return 6;
+    		return 3;
   		} else {
-  			return 8;
+  			return 4;
   		}
 	}
 
@@ -201,8 +204,8 @@ class LocalFileExplorerState extends FileExplorerState {
 		)
 	];
 
-	 @override
-	 Future<VoidCallback> addFile() async {
+	@override
+	Future<VoidCallback> addFile() async {
 		for (int? postfix; ; postfix = (postfix ?? 0) + 1) {
 			final name = 'new_file${postfix ?? ''}.json';
 			final file = File.fromUri(Modular.args.uri.resolve(name));

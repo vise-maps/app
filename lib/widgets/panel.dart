@@ -58,7 +58,7 @@ class PanelState extends State<Panel> {
 									'Vise Maps',
 									style: TextStyle(
 										fontSize: 15,
-										fontWeight: FontWeight.w500,
+										fontWeight: FontWeight.w600,
 										color: Color(0x99000000)
 									)
 								),
@@ -216,6 +216,7 @@ class PanelState extends State<Panel> {
 								style: TextStyle(
 									fontWeight: FontWeight.w600,
 									fontSize: 16,
+									letterSpacing: 2,
 									color: Color(0x80000000),
 								),
 							),
@@ -300,7 +301,9 @@ class PanelState extends State<Panel> {
 						]
 					),
 				),
+				const SizedBox(height: 8),
 			],
+			const SizedBox(height: 16),
 			buildButtons(context)
 		];
 	}
