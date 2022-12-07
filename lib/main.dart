@@ -52,7 +52,7 @@ void main() async {
             children: [
               SideNavigationBar(
                 footer: const SideNavigationBarFooter(
-                  label: Text('© 2022 Tomáš Wróbel & Marco Kormainik'),
+                  label: Text('© 2022 Tomáš Wróbel &\nMarco Nicolas Kormanik'),
                 ),
                 header: SideNavigationBarHeader(
                   image: CircleAvatar(

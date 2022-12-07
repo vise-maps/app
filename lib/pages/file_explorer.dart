@@ -30,7 +30,7 @@ class FileExplorer extends StatelessWidget {
                 for (final file in snapshot.data!.items) (
                   Card(
                     child: InkWell(
-                      onTap: () => context.go('/browse/${file.name}'),
+                      onTap: () => context.go('/edit/${file.name}'),
                       child: Column(
                         children: [
                           Expanded(child: FutureBuilder(
@@ -103,6 +103,7 @@ class FileExplorer extends StatelessWidget {
             )
           );
         },
+        child: const Icon(Icons.add),
       ),
     );
   }
