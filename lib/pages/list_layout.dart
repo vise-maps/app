@@ -1,16 +1,22 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:visemaps/controllers/editor_controller.dart';
 import 'package:visemaps/utils/link.dart';
 
 class ListLayout extends AnimatedWidget {
-	const ListLayout({required EditorController listenable, Key? key}) : super(key: key, listenable: listenable);
+	const ListLayout({
+		required EditorController listenable, 
+		Key? key
+	}) : super(
+    key: key, 
+    listenable: listenable
+  );
 
 	@override
 	Widget build(BuildContext context) {
 		final editor = listenable as EditorController;
 		if (editor.file == null) {
 			return const Center(
-				child: CupertinoActivityIndicator(),
+				child: CircularProgressIndicator(),
 			);
 		}
 		return Padding(
@@ -39,8 +45,7 @@ class ListLayout extends AnimatedWidget {
 						child: ListView.separated(
 							itemBuilder: (context, index) {
 								final item = editor.file!.children[index];
-								final focused =
-									item.hasChild(editor.focused)
+								final focused = item.hasChild(editor.focused)
 									? editor.focused!
 									: item;
 								return Container(
@@ -68,7 +73,7 @@ class ListLayout extends AnimatedWidget {
 													onTap: () {
 														editor.add(focused);
 													},
-													child: const Icon(CupertinoIcons.add_circled),
+													child: const Icon(Icons.add_circle),
 												)
 											),
 											SizedBox(
@@ -86,7 +91,7 @@ class ListLayout extends AnimatedWidget {
 																editor.addLink(focused);
 															},
 															child: const Icon(
-																CupertinoIcons.add,
+																Icons.add,
 																color: Color(0xFF2200CC),
 																size: 16
 															)

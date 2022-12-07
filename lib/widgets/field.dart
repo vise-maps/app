@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Field extends StatefulWidget {
 	final bool disabled;
@@ -74,7 +74,7 @@ class FieldState extends State<Field> {
 							borderRadius: BorderRadius.circular(4),
 							border: Border.all(
 								color: node.hasPrimaryFocus
-									? CupertinoTheme.of(context).primaryColor
+									? Colors.pink
 									: Color.fromRGBO(0, 0, 0, hover ? 0.2 : 0.16),
 								width: borderWidth,
 							),
@@ -83,7 +83,7 @@ class FieldState extends State<Field> {
 							children: [
 								if (widget._searchField) ...[
 									Icon(
-										CupertinoIcons.search,
+										Icons.search,
 										size: 12,
 										color: color,
 									),

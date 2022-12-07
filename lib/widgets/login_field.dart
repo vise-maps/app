@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class LoginField extends StatelessWidget {
 	LoginField({
@@ -13,7 +13,7 @@ class LoginField extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		final Color primary = CupertinoTheme.of(context).primaryColor;
+		final Color primary = Theme.of(context).primaryColor;
 		return AnimatedBuilder(
 			animation: node,
 			builder: (BuildContext context, Widget? child) {

@@ -18,7 +18,7 @@
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart' show AuthProvider;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_modular/flutter_modular.dart';
+import 'package:go_router/go_router.dart';
 import 'package:visemaps/utils/login_icons.dart';
 
 abstract class SocialButton<P extends AuthProvider> extends StatelessWidget {
@@ -65,7 +65,7 @@ abstract class SocialButton<P extends AuthProvider> extends StatelessWidget {
 					}
 					final credentials = await FirebaseAuth.instance.signInWithPopup(provider);
 					if (credentials.user != null) {
-						Modular.to.navigate('/');
+						context.go('/browse');
 					}
 				} catch (e) {
 					showCupertinoDialog(

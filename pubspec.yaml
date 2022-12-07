@@ -15,12 +15,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   path_provider: ^2.0.11
   vector_math: ^2.1.2
-  firebase_core: ^1.19.2
-  firebase_storage: ^10.3.2
-  firebase_auth: ^3.4.2
-  flutter_modular: ^5.0.3
+  firebase_core: ^2.3.0
+  firebase_storage: ^11.0.6
+  firebase_auth: ^4.1.5
   fs:
     path: fs
+  go_router: ^5.2.1
+  side_navigation: ^1.0.4
 
 dev_dependencies:
   flutter_lints: ^2.0.0
