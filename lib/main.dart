@@ -7,6 +7,7 @@ import 'package:side_navigation/side_navigation.dart';
 import 'package:visemaps/controllers/editor_controller.dart';
 import 'package:visemaps/controllers/stream_notifier.dart';
 import 'package:visemaps/firebase_options.dart';
+import 'package:visemaps/pages/editor.dart';
 import 'package:visemaps/pages/file_explorer.dart';
 import 'package:visemaps/pages/login.dart';
 import 'package:visemaps/controllers/auth.dart';
@@ -17,7 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final authState = StreamNotifier(FirebaseAuth.instance.authStateChanges());
-  final controller = EditorController();
+  final editor = EditorController();
 
   final paths = [
     'browse',
@@ -110,15 +111,18 @@ void main() async {
             if (user == null) {
               return '/login';
             }
-            if (authState.value != null && controller.file == null) {
+            if (authState.value != null && editor.file == null) {
               final ref = FirebaseStorage.instance.ref(user.uid).child(
                 state.params['id']!
               );
 
-              controller.openReference(ref);
+              editor.openReference(ref);
             }
             return null;
           },
+          builder: (context, state) => Editor(
+            controller: editor,
+          ),
         )
       ]
     )
@@ -129,6 +133,7 @@ void main() async {
       theme: ThemeData(
         primaryColor: const Color(0xFFEF5350)
       ),
+      title: 'Vise Maps',
     )
   );
 }
