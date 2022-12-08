@@ -1,17 +1,19 @@
 import 'dart:convert';
-import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:visemaps/controllers/auth.dart';
+import 'package:visemaps/controllers/editor_controller.dart';
 import 'package:visemaps/controllers/item.dart';
 import 'package:visemaps/pages/tree_layout.dart';
 import 'package:go_router/go_router.dart';
 import 'package:visemaps/utils/navigation.dart';
 
 class FileExplorer extends StatelessWidget {
-  const FileExplorer({Key? key}) : super(key: key);
+  final EditorController editor;
+  
+  const FileExplorer({Key? key, required this.editor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,12 @@ class FileExplorer extends StatelessWidget {
                 for (final file in snapshot.data!.items) (
                   Card(
                     child: InkWell(
-                      onTap: () => context.go('/edit/${file.name}'),
+                      onTap: () {
+                        final ref = folder.child(file.name);
+
+                        editor.openReference(ref);
+                        context.go('/edit/${file.name}');
+                      },
                       child: Column(
                         children: [
                           Expanded(child: FutureBuilder(

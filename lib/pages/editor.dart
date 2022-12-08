@@ -28,10 +28,14 @@ class Editor extends StatelessWidget {
           },
         ),
         actions: [
-          TextButton(
-            onPressed: controller.toggleList, 
-            child: const Text('Switch view')
-          )
+          ValueListenableBuilder(
+            valueListenable: controller.list, 
+            builder: (context, bool list, child) => IconButton(
+                icon: Icon(list ? Icons.grid_view_rounded : Icons.list),
+                onPressed: controller.toggleList,
+                tooltip: list ? 'Switch to tree view' : 'Switch to list view',
+            )
+          ),
         ],
       ),
       body: ValueListenableBuilder(

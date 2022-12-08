@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:side_navigation/side_navigation.dart';
@@ -121,7 +120,9 @@ void main() async {
               }
               return null;
             },
-            builder: (context, state) => const FileExplorer(),
+            builder: (context, state) => FileExplorer(
+              editor: editor,
+            ),
           ),
           GoRoute(
             path: '/edit/:id',
@@ -130,13 +131,6 @@ void main() async {
               final user = authState.value;
               if (user == null) {
                 return '/welcome';
-              }
-              if (authState.value != null && editor.file == null) {
-                final ref = FirebaseStorage.instance.ref(user.uid).child(
-                  state.params['id']!
-                );
-
-                editor.openReference(ref);
               }
               return null;
             },
