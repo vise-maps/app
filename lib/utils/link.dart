@@ -15,7 +15,7 @@
 /// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ///
 /// link.dart - the controller of a link in the editor.
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 @immutable
 class Link {
@@ -46,7 +46,7 @@ class LinkInput extends StatelessWidget {
 					mainAxisSize: MainAxisSize.min,
 					children: [
 						const Icon(
-							CupertinoIcons.link,
+							Icons.link,
 							color: Color(0xFF2200CC),
 							size: 16
 						),

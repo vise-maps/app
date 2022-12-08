@@ -37,7 +37,9 @@ class FileExplorer extends StatelessWidget {
                       onTap: () {
                         final ref = folder.child(file.name);
 
-                        editor.openReference(ref).then((value) => context.go('/edit/${file.name}'));
+                        editor.openReference(ref).then((value) {
+                          context.go('/edit/${file.name}');
+                        });
                       },
                       child: Column(
                         children: [
