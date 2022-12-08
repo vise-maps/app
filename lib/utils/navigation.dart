@@ -39,6 +39,6 @@ void onTap(BuildContext context, int index) {
 }
 
 int getActive(BuildContext context) {
-  final path = GoRouter.of(context!).location;
+  final path = GoRouter.of(context).location;
   return _paths.indexOf(Uri.parse(path).pathSegments[0]);
 } 
