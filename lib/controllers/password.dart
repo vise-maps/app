@@ -24,5 +24,5 @@ class PasswordController extends TextEditingController {
 			style: style,
 			text: '•' * value.text.length
 		);
-  	}
+  }
 }

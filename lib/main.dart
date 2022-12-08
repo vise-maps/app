@@ -11,6 +11,9 @@ import 'package:visemaps/pages/editor.dart';
 import 'package:visemaps/pages/file_explorer.dart';
 import 'package:visemaps/pages/login.dart';
 import 'package:visemaps/controllers/auth.dart';
+import 'package:visemaps/pages/signup.dart';
+import 'package:visemaps/pages/welcome.dart';
+import 'package:visemaps/utils/navigation.dart';
 import 'url/native.dart' if (dart.library.html) 'url/web.dart';
 
 void main() async {
@@ -20,113 +23,131 @@ void main() async {
   final authState = StreamNotifier(FirebaseAuth.instance.authStateChanges());
   final editor = EditorController();
 
-  final paths = [
-    'browse',
-    'recents',
-    'trash',
-    'settings',
-  ];
-
-  final config = GoRouter(routes: [
-    GoRoute(
-      path: '/login', 
-      builder: (context, state) => const Login()
-    ),
-    GoRoute(
-      path: '/',
-      redirect: (context, state) {
-        if (authState.value == null) {
-          return '/login';
-        }
-        return '/browse';
-      },
-    ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const Login(),
-    ),
-    ShellRoute(
-        builder: (context, state, child) => Scaffold(
-        body: Auth(
-          notifier: authState,
-          child: Row(
-            children: [
-              SideNavigationBar(
-                footer: const SideNavigationBarFooter(
-                  label: Text('© 2022 Tomáš Wróbel &\nMarco Nicolas Kormanik'),
-                ),
-                header: SideNavigationBarHeader(
-                  image: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      authState.value?.photoURL 
-                        ?? 'https://via.placeholder.com/150'
-                    ),
-                  ),
-                  title: Text(authState.value?.displayName ?? 'Unnamed'),
-                  subtitle: Text(authState.value?.email ?? '')
-                ),
-                selectedIndex: paths.indexOf(Uri.parse(state.location).pathSegments[0]),
-                items: const [
-                  SideNavigationBarItem(
-                    icon: Icons.home, 
-                    label: 'Home'
-                  ),
-                  SideNavigationBarItem(
-                    icon: Icons.history, 
-                    label: 'Recents'
-                  ),
-                  SideNavigationBarItem(
-                    icon: Icons.delete, 
-                    label: 'Trash'
-                  ),
-                  SideNavigationBarItem(
-                    icon: Icons.settings, 
-                    label: 'Settings'
-                  )
-                ],
-                onTap: (index) {
-                  context.go('/${paths[index]}');
-                }
-              ),
-              Expanded(child: child)
-            ]
-          )
-        )
+  final config = GoRouter(
+    refreshListenable: authState, 
+    routes: [
+      GoRoute(
+        path: '/',
+        redirect: (context, state) {
+          if (authState.value == null) {
+            return '/welcome';
+          }
+          return '/browse';
+        },
       ),
-      routes: [
-        GoRoute(
-          path: '/browse',
-          redirect: (context, state) {
-            if (authState.value == null) {
-              return '/login';
-            }
-            return null;
-          },
-          builder: (context, state) => const FileExplorer(),
-        ),
-        GoRoute(
-          path: '/edit/:id',
-          redirect: (context, state) {
-            final user = authState.value;
-            if (user == null) {
-              return '/login';
-            }
-            if (authState.value != null && editor.file == null) {
-              final ref = FirebaseStorage.instance.ref(user.uid).child(
-                state.params['id']!
-              );
-
-              editor.openReference(ref);
-            }
-            return null;
-          },
-          builder: (context, state) => Editor(
-            controller: editor,
+      GoRoute(
+        path: '/welcome',
+        builder: (context, state) => const Scaffold(body: Welcome()),
+        redirect: (context, state) => authState.value == null ? null : '/browse',
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const Scaffold(body: Login()),
+        redirect: (context, state) => authState.value == null ? null : '/browse',
+      ),
+      GoRoute(
+        path: '/sign-up',
+        builder: (context, state) => const Scaffold(body: SignUp()),
+        routes: [
+          GoRoute(
+            path: 'password',
+            builder: (context, state) => SignUpPasswords(
+              email: state.queryParams['email']!,
+              name: state.queryParams['name']!,
+            ),
           ),
-        )
-      ]
-    )
-  ]);
+        ],
+        redirect: (context, state) => authState.value == null ? null : '/browse',
+      ),
+      ShellRoute(
+          builder: (context, state, child) => Auth(
+            notifier: authState,
+            child: OrientationBuilder(
+            builder: (context, orientation) {
+              if (orientation == Orientation.portrait) {
+                return child;
+              } else {
+                return Row(
+                  children: [
+                    SideNavigationBar(
+                      footer: const SideNavigationBarFooter(
+                        label: Text('© 2022 Tomáš Wróbel &\nMarco Nicolas Kormanik'),
+                      ),
+                      header: SideNavigationBarHeader(
+                        image: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            authState.value?.photoURL 
+                              ?? 'https://via.placeholder.com/150'
+                          ),
+                        ),
+                        title: Text(authState.value?.displayName ?? 'Unnamed'),
+                        subtitle: Text(authState.value?.email ?? '')
+                      ),
+                      selectedIndex: getActive(context),
+                      items: const [
+                        SideNavigationBarItem(
+                          icon: Icons.home, 
+                          label: 'Home'
+                        ),
+                        SideNavigationBarItem(
+                          icon: Icons.history, 
+                          label: 'Recents'
+                        ),
+                        SideNavigationBarItem(
+                          icon: Icons.delete, 
+                          label: 'Trash'
+                        ),
+                        SideNavigationBarItem(
+                          icon: Icons.settings, 
+                          label: 'Settings'
+                        )
+                      ],
+                      onTap: (index) => onTap(context, index)
+                    ),
+                    Expanded(child: child)
+                  ]
+                );
+              }
+            }
+          )
+        ),
+        routes: [
+          GoRoute(
+            path: '/browse',
+            name: 'File Explorer',
+            redirect: (context, state) {
+              if (authState.value == null) {
+                return '/welcome';
+              }
+              return null;
+            },
+            builder: (context, state) => const FileExplorer(),
+          ),
+          GoRoute(
+            path: '/edit/:id',
+            name: 'Editor',
+            redirect: (context, state) {
+              final user = authState.value;
+              if (user == null) {
+                return '/welcome';
+              }
+              if (authState.value != null && editor.file == null) {
+                final ref = FirebaseStorage.instance.ref(user.uid).child(
+                  state.params['id']!
+                );
+
+                editor.openReference(ref);
+              }
+              return null;
+            },
+            builder: (context, state) => Editor(
+              controller: editor,
+            ),
+          )
+        ]
+      )
+    ]
+  );
   runApp(
     MaterialApp.router(
       routerConfig: config,

@@ -17,8 +17,7 @@
 /// social_button.dart - The design and basic functionality of a social sign-in button.
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart' show AuthProvider;
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 import 'package:visemaps/utils/login_icons.dart';
 
 abstract class SocialButton<P extends AuthProvider> extends StatelessWidget {
@@ -63,18 +62,15 @@ abstract class SocialButton<P extends AuthProvider> extends StatelessWidget {
 						provider.addScope('email');
 						provider.addScope('profile');	
 					}
-					final credentials = await FirebaseAuth.instance.signInWithPopup(provider);
-					if (credentials.user != null) {
-						context.go('/browse');
-					}
+					await FirebaseAuth.instance.signInWithPopup(provider);
 				} catch (e) {
-					showCupertinoDialog(
+					showDialog(
 						context: context, 
-						builder: (BuildContext context) => CupertinoAlertDialog(
+						builder: (BuildContext context) => AlertDialog(
 							title: const Text('Error'),
 							content: Text(e.toString()),
 							actions: [
-								CupertinoDialogAction(
+								TextButton(
 									child: const Text('OK'),
 									onPressed: () => Navigator.pop(context),
 								)

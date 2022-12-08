@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:visemaps/widgets/login_field.dart';
 import 'package:visemaps/controllers/password.dart';
 import 'package:visemaps/painters/sign.dart';
@@ -28,7 +27,7 @@ class LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final MediaQueryData mediaQuery = MediaQuery.of(context);
-    const Color primary = Colors.pink;
+    final Color primary = Theme.of(context).primaryColor;
     const Text heading = Text('Log In',
         style: TextStyle(
           color: Color(0xFF000000),
@@ -73,7 +72,6 @@ class LoginState extends State<Login> {
                                                   .signInWithEmailAndPassword(
                                                       email: email.text,
                                                       password: password.text);
-                                              context.go('/browse');
                                             } catch (e) {
                                               showDialog(
                                                   context: context,
@@ -250,7 +248,6 @@ class LoginState extends State<Login> {
                             await FirebaseAuth.instance
                                 .signInWithEmailAndPassword(
                                     email: email.text, password: password.text);
-                            context.go('/');
                           } catch (e) {
                             showDialog(
                                 context: context,

@@ -166,6 +166,10 @@ class EditorController with ChangeNotifier {
 		notifyListeners();
 	}
 
+  void close() {
+    
+  }
+
 	void toggleList() {
 		list.value = !list.value;
 		notifyListeners();

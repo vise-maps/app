@@ -3,6 +3,7 @@ import 'package:visemaps/controllers/editor_controller.dart';
 import 'package:visemaps/controllers/item.dart';
 import 'package:visemaps/pages/list_layout.dart';
 import 'package:visemaps/pages/tree_layout.dart';
+import 'package:visemaps/utils/navigation.dart';
 
 class Editor extends StatelessWidget {
   final EditorController controller;
@@ -41,6 +42,7 @@ class Editor extends StatelessWidget {
             : TreeLayout.editable(editor: controller);
         }, 
       ),
+      bottomNavigationBar: bottomBar(context),
     );
   }
 }

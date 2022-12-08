@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:html';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,6 +8,7 @@ import 'package:visemaps/controllers/auth.dart';
 import 'package:visemaps/controllers/item.dart';
 import 'package:visemaps/pages/tree_layout.dart';
 import 'package:go_router/go_router.dart';
+import 'package:visemaps/utils/navigation.dart';
 
 class FileExplorer extends StatelessWidget {
   const FileExplorer({Key? key}) : super(key: key);
@@ -103,8 +105,9 @@ class FileExplorer extends StatelessWidget {
             )
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add)
       ),
+      bottomNavigationBar: bottomBar(context),
     );
   }
 }
