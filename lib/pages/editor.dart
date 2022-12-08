@@ -13,17 +13,17 @@ class Editor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AnimatedBuilder(
+        title: AnimatedBuilder(
           animation: controller,
           builder: (context, child) {
             if (controller.focused == null) {
-              return Text(controller.file?.controller.text ?? 'Loading...', style: AppBarTheme.of(context).titleTextStyle);
+              return Text(controller.file?.controller.text ?? 'Loading...');
             } else {
               final parts = <String>[];
               for (Item? item = controller.focused; item != null; item = item.parent) {
                 parts.insert(0, item.controller.text == '' ? '[unnamed]' : item.controller.text);
               }
-              return Text(parts.join(' > '), style: AppBarTheme.of(context).titleTextStyle);
+              return Text(parts.join(' > '));
             }
           },
         ),
