@@ -38,7 +38,7 @@ class Editor extends StatelessWidget {
         valueListenable: controller.list,
         builder: (context, bool list, child) {
           return list 
-            ? ListLayout(listenable: controller) 
+            ? ListLayout(editor: controller) 
             : TreeLayout.editable(editor: controller);
         }, 
       ),
