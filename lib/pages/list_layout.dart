@@ -3,17 +3,18 @@ import 'package:visemaps/controllers/editor_controller.dart';
 import 'package:visemaps/utils/link.dart';
 
 class ListLayout extends AnimatedWidget {
+  final EditorController editor;
+
 	const ListLayout({
-		required EditorController listenable, 
+		required this.editor,
 		Key? key
 	}) : super(
     key: key, 
-    listenable: listenable
+    listenable: editor
   );
 
 	@override
 	Widget build(BuildContext context) {
-		final editor = listenable as EditorController;
 		if (editor.file == null) {
 			return const Center(
 				child: CircularProgressIndicator(),
@@ -60,7 +61,7 @@ class ListLayout extends AnimatedWidget {
 									padding: const EdgeInsets.all(8),
 									child: Column(
 										children: [
-											...item.getList(),
+											...item.getList(editor),
 											const SizedBox(height: 10),
 											Container(
 												height: 1,

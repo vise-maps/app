@@ -29,6 +29,7 @@ class EditorController with ChangeNotifier {
 	Item? file;
 	Item? focused;
 	Timer? saveTimer;
+  Item? added;
 	bool hasChanged = false;
 	final list = ValueNotifier(false);
 
@@ -114,17 +115,25 @@ class EditorController with ChangeNotifier {
 	}
 
 	void add(Item item) {
-		item.children.add(
-			Item(
-				description: '',
-				links: [],
-				title: '',
-				color: item.color,
-				children: []
-			)
-			..parent = item
-		);
-		installListeners(item.children.last);
+    added = Item(
+      description: '',
+      links: [],
+      title: '',
+      color: item.color,
+      children: []
+    );
+    added!.parent = item;
+
+    void onBlur() {
+      if (!added!.hasFocus) {
+        added!.controller.removeListener(onBlur);
+        added = null;
+      }
+    }
+
+    added!.controller.addListener(onBlur);
+		item.children.add(added!);
+    installListeners(added!);
 		notifyListeners();
 	}
 

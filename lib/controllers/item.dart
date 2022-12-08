@@ -145,6 +145,7 @@ class Item {
 							EditableText(
 								controller: controller,
 								focusNode: node,
+                autofocus: editor?.added == this,
 								style: TextStyle(
 									color: color,
 									fontSize: root ? 19 : 17,
