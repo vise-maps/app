@@ -67,7 +67,7 @@ void main() async {
               if (orientation == Orientation.portrait) {
                 return child;
               } else {
-                return Row(
+                return Material(child: Row(
                   children: [
                     SideNavigationBar(
                       footer: const SideNavigationBarFooter(
@@ -106,7 +106,7 @@ void main() async {
                     ),
                     Expanded(child: child)
                   ]
-                );
+                ));
               }
             }
           )
