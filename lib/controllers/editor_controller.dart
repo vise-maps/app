@@ -26,7 +26,7 @@ import 'package:visemaps/controllers/item.dart';
 import 'package:visemaps/utils/link.dart';
 
 class EditorController with ChangeNotifier {
-	Item? file;
+	final _file = ValueNotifier<Item?>(null);
 	Item? focused;
 	Timer? saveTimer;
   Item? added;
@@ -38,6 +38,16 @@ class EditorController with ChangeNotifier {
 			hasChanged = true;
 		});
 	}
+
+  Item? get file => _file.value;
+  
+  @protected
+  set file(Item? value) {
+    _file.value = value;
+    notifyListeners();
+  }
+
+  Listenable get update => Listenable.merge([_file, list]);
 
 	@override
 	void dispose() {
@@ -150,7 +160,7 @@ class EditorController with ChangeNotifier {
 
 	Future<void> openFile(File entity) async {
 		saveTimer?.cancel();
-		file = Item.fromMap(json.decode(await entity.readAsString()));
+		_file.value = Item.fromMap(json.decode(await entity.readAsString()));
 		if (file != null) {
 			installListeners(file!);
 			saveTimer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
@@ -172,12 +182,7 @@ class EditorController with ChangeNotifier {
 				])
 			)
 		);
-		notifyListeners();
 	}
-
-  void close() {
-    
-  }
 
 	void toggleList() {
 		list.value = !list.value;

@@ -38,10 +38,13 @@ class Editor extends StatelessWidget {
           ),
         ],
       ),
-      body: ValueListenableBuilder(
-        valueListenable: controller.list,
-        builder: (context, bool list, child) {
-          return list 
+      body: AnimatedBuilder(
+        animation: controller.update,
+        builder: (context, child) {
+          if (controller.file == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return controller.list.value 
             ? ListLayout(editor: controller) 
             : TreeLayout.editable(editor: controller);
         }, 
