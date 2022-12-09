@@ -73,10 +73,10 @@ void main() async {
                       theme: SideNavigationBarTheme(
                         itemTheme: SideNavigationBarItemTheme(
                           labelTextStyle: const TextStyle(
-                            fontSize: 20, 
-                            fontWeight: FontWeight.w200
+                            fontSize: 16, 
+                            fontWeight: FontWeight.w100
                           ),
-                          iconSize: 20,
+                          iconSize: 24,
                           selectedItemColor: Theme.of(context).primaryColor
                         ),
                         dividerTheme: SideNavigationBarDividerTheme.standard(),
