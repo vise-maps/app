@@ -157,7 +157,7 @@ void main() async {
             builder: (context, state) => LicensePage(
               applicationIcon: CustomPaint(
                 painter: ViseMapsLogoPainter(),
-                child: const SizedBox(width: 100)
+                child: const SizedBox.square(dimension: 100)
               ),
             )
           ),
