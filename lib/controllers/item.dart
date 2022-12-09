@@ -15,7 +15,7 @@
 /// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ///
 /// item.dart - the controller of an item in the editor.
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:visemaps/controllers/editor_controller.dart';
 import 'package:visemaps/utils/link.dart';
 
@@ -224,7 +224,7 @@ class Item {
 													editor.addLink(this);
 												},
 												child: const Icon(
-													CupertinoIcons.add,
+													Icons.add,
 													color: Color(0xFF2200CC),
 													size: 16
 												)

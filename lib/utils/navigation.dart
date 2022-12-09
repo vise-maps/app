@@ -10,12 +10,12 @@ Widget? bottomBar(BuildContext context) => MediaQuery.of(context).orientation !=
         label: 'Home'
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.history),
-        label: 'Recents'
+        icon: Icon(Icons.delete),
+        label: 'Trash'
       ),
       BottomNavigationBarItem(
-        icon: Icon(Icons.delete),
-        label: 'Trash' 
+        icon: Icon(Icons.info),
+        label: 'About' 
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.settings),
@@ -29,8 +29,8 @@ Widget? bottomBar(BuildContext context) => MediaQuery.of(context).orientation !=
 
 final _paths = [
   'browse',
-  'recents',
   'trash',
+  'about',
   'settings',
 ];
 

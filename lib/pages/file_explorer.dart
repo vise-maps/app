@@ -21,8 +21,7 @@ class FileExplorer extends StatelessWidget {
     final files = folder.listAll();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('File Explorer'),
-        elevation: 0,
+        title: const Text('File Explorer')
       ),
       body: FutureBuilder(
         future: files,

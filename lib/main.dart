@@ -89,12 +89,12 @@ void main() async {
                           label: 'Home'
                         ),
                         SideNavigationBarItem(
-                          icon: Icons.history, 
-                          label: 'Recents'
-                        ),
-                        SideNavigationBarItem(
                           icon: Icons.delete, 
                           label: 'Trash'
+                        ),
+                        SideNavigationBarItem(
+                          icon: Icons.info, 
+                          label: 'About'
                         ),
                         SideNavigationBarItem(
                           icon: Icons.settings, 
@@ -137,7 +137,12 @@ void main() async {
             builder: (context, state) => Editor(
               controller: editor,
             ),
-          )
+          ),
+          GoRoute(
+            path: '/about', 
+            name: 'About', 
+            builder: (context, state) => const LicensePage()
+          ),
         ]
       )
     ]
@@ -146,7 +151,22 @@ void main() async {
     MaterialApp.router(
       routerConfig: config,
       theme: ThemeData(
-        primaryColor: const Color(0xFFEF5350)
+        primaryColor: const Color(0xFFEF5350),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.w200
+          ),
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color(0xFFEF5350),
+          foregroundColor: Colors.white,
+        ),
+
       ),
       title: 'Vise Maps',
     )

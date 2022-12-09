@@ -78,6 +78,7 @@ class EditorController with ChangeNotifier {
 						item.controller.text += title.substring(end);
 						item.controller.selection = TextSelection.collapsed(offset: start + 1);
 					} else {
+            item.node.unfocus();
 						add(item);
 					}
 					return KeyEventResult.handled;

@@ -74,7 +74,10 @@ class ListLayout extends AnimatedWidget {
 													onTap: () {
 														editor.add(focused);
 													},
-													child: const Icon(Icons.add_circle),
+													child: Icon(
+                            Icons.add_circle,
+                            color: item.color,
+                          ),
 												)
 											),
 											SizedBox(
