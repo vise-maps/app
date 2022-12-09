@@ -155,7 +155,7 @@ void main() async {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
-          elevation: 0,
+          elevation: 0.5,
           titleTextStyle: TextStyle(
             color: Colors.black,
             fontSize: 20,
