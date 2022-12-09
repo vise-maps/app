@@ -12,6 +12,7 @@ import 'package:visemaps/pages/login.dart';
 import 'package:visemaps/controllers/auth.dart';
 import 'package:visemaps/pages/signup.dart';
 import 'package:visemaps/pages/welcome.dart';
+import 'package:visemaps/painters/logo.dart';
 import 'package:visemaps/utils/navigation.dart';
 import 'url/native.dart' if (dart.library.html) 'url/web.dart';
 
@@ -69,6 +70,18 @@ void main() async {
                 return Material(child: Row(
                   children: [
                     SideNavigationBar(
+                      theme: SideNavigationBarTheme(
+                        itemTheme: SideNavigationBarItemTheme(
+                          labelTextStyle: const TextStyle(
+                            fontSize: 20, 
+                            fontWeight: FontWeight.w200
+                          ),
+                          iconSize: 20,
+                          selectedItemColor: Theme.of(context).primaryColor
+                        ),
+                        dividerTheme: SideNavigationBarDividerTheme.standard(),
+                        togglerTheme: SideNavigationBarTogglerTheme.standard(),
+                      ),
                       footer: const SideNavigationBarFooter(
                         label: Text('© 2022 Tomáš Wróbel &\nMarco Nicolas Kormanik'),
                       ),
@@ -141,7 +154,12 @@ void main() async {
           GoRoute(
             path: '/about', 
             name: 'About', 
-            builder: (context, state) => const LicensePage()
+            builder: (context, state) => LicensePage(
+              applicationIcon: CustomPaint(
+                painter: ViseMapsLogoPainter(),
+                child: const SizedBox.expand()
+              ),
+            )
           ),
         ]
       )
@@ -165,8 +183,7 @@ void main() async {
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Color(0xFFEF5350),
           foregroundColor: Colors.white,
-        ),
-
+        )
       ),
       title: 'Vise Maps',
     )
